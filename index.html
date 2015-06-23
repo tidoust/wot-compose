@@ -1,0 +1,1764 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Web Thing Model</title>
+    <meta charset='utf-8'>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c-common'
+            async class='remove'></script>
+    <script class='remove'>
+      var respecConfig = {
+        specStatus: 'unofficial',
+        shortName:  'wot-model',
+        additionalCopyrightHolders: 'Copyright © 2015 EVRYTHNG',
+        editors: [
+          {
+            name: 'Vlad Trifa',
+            company: 'EVRYTHNG',
+            companyURL: 'http://evrythng.com/'
+          },
+          {
+            name: 'Dominique Guinard',
+            company: 'EVRYTHNG',
+            companyURL: 'http://evrythng.com/'
+          },
+          {
+            name: 'David Carrera',
+            company: 'Barcelona Supercomputing Center',
+            companyURL: 'http://bsc.es/'
+          },
+          {
+            name: 'François Daoust',
+            company: 'W3C',
+            companyURL: 'http://www.w3.org'
+          }
+        ],
+        logos: [
+          {
+            src: 'http://www.w3.org/Icons/w3c_home',
+            url: 'http://www.w3.org',
+            alt: 'W3C',
+            width: 72,
+            height: 48
+          },
+          {
+            src: 'http://www.w3.org/Icons/member_subm',
+            url: 'http://www.w3.org/Submission/',
+            alt: 'W3C Member Submission',
+            width: 211,
+            height: 48
+          }
+        ],
+        localBiblio: {
+          'REST': {
+            title: 'Architectural Styles and the Design of Network-based Software Architectures',
+            href: 'http://roy.gbiv.com/pubs/dissertation/top.htm',
+            authors: [
+              'Roy Thomas Fielding'
+            ],
+            status: 'Doctoral Dissertation',
+            date: 'September 2000'
+          },
+          'SI': {
+            title: 'Internation System of Units (SI)',
+            href: 'http://physics.nist.gov/cuu/Units/units.html'
+          }
+        }
+      };
+    </script>
+    <style type="text/css">
+      table {
+        border: 1px solid grey;
+      }
+    </style>
+  </head>
+  <body>
+    <section id='abstract'>
+      <p>
+        This document aims to standardize the Web of Things by defining a set of specific implementation and resource design guidelines to be followed by anyone wanting to create a product, device, service, or application for the Web of Things.
+      </p>
+    </section>
+
+    <section id='sotd'>
+      <p>
+        This document is intended to be submitted as a W3C Member Submission.
+      </p>
+    </section>
+    
+    <section class='informative'>
+      <h2>Introduction</h2>
+      <p>
+        The following guidelines and recommendations will ensure interoperability across all entities on the Web of Things. Unlike other custom (non-Web) protocols used for machine-to-machine communications that create a “parallel universe” to the existing Web; the Web of Things is designed to be seamlessly integrated to the existing Web so it can fully leverage its infrastructure and standards to minimize integrations across applications and systems.
+      </p>
+      <p>
+        The proposal is composed of three sub-parts:
+      </p>
+      <ul>
+        <li>
+          <strong>Integration Patterns</strong>. This section discusses the way Things are integrated to the Web. It proposes 3 different patterns, Direct Connectivity, Gateway Based Connectivity, Cloud Based Connectivity.
+        </li>
+        <li>
+          <strong>Web Things (WT) Requirements</strong>. This part does not introduce any specific data naming conventions of domain-specific models. It is solely composed of multiple constraints and recommendations on how the protocol should be implemented so that any entity on the Web of Things can easily interact with each other. Respecting these requirements turns an HTTP server into a Web Thing.
+        </li>
+        <li>
+          <strong>Web Things Model</strong>. Once a Web Thing follows the conventions defined above, it is then capable to read and exchange data with any other entities of the Web of Things. However, it does not mean it can “understand” what the object is, what data or services it offers, etc. Therefore, the second component of this specification proposes an HTTP and WebSockets based protocol with a set of resources, data models, payload syntax and semantic extensions that Web Thing and applications should follow. Respecting these requirements turns a Web Thing into an Interoperable Web Thing. Implementing semantic extensions (e.g., via JSON-LD) turns the Interoperable Web Thing into a Semantic Web Thing.
+        </li>
+      </ul>
+      <figure id="wot-levels">
+        <img src="wot-levels.png" alt="Web Thing Model levels build on top of each other, from a Web Thing that implement the requirements to the Interoperable Web Thing and Semantic Web Thing" width="800" />
+        <figcaption>Web Thing Model levels</figcaption>
+      </figure>
+    </section>
+    
+    <section id='conformance'>
+      <p>
+        This specification has two classes of products:
+      </p>
+      <dl>
+        <dt><dfn>Web Thing</dfn></dt>
+        <dd>A virtual representation of a physical object (a Thing) accessible on the Web. Examples of Web Things are: an Arduino board, a garage door, a bottle of soda, a building, a TV, etc. It could also be an intermediate in the network such as a Gateway or a Cloud service.</dd>
+        <dt><dfn>Interoperable Web Thing</dfn></dt>
+        <dd>A <a>Web Thing</a> that also supports the HTTP API and model defined in this specification, thus enabling its automatic inclusion in more complex systems.</dd>
+      </dl>
+      <p>
+        A <a>Web Thing</a> conforms to this specification if it follows the statements defined in <a href="#web-things-requirements"></a>.
+      </p>
+      <p>
+        An <a>Interoperable Web Thing</a> conforms to this specification if it follows the statements defined in <a href="#web-things-requirements"></a> and <a href="#web-things-model"></a>.
+      </p>
+      <p class="issue" title="@tidoust">
+        Any better name for "Interoperable Web Thing" perhaps? The whole purpose of standards is to improve interoperability, so a basic Web Thing should already qualify as an interoperable one.
+      </p>
+    </section>
+
+    <section>
+      <h2>Terminology</h2>
+      <p>
+        The following terms are considered in this proposal:
+      </p>
+      <dl>
+        <dt><dfn>Client</dfn></dt>
+        <dd>A <a>Client</a> refers to any physical or digital entity that can interact with a Web Thing. This can be a mobile application, a Web browser, a proxy, a desktop application but also another Web Things (e.g., in the case of Machine to Machine communication).</dd>
+
+        <dt><dfn>Action</dfn></dt>
+        <dd><a title="action">Actions</a> are requests that an external entity can send to a <a>Web Thing</a>, which may or may not change the internal state of the <a>Web Thing</a>. This is used mainly to send commands or notifications to a physical object. Examples of Actions are “open” or “close” for a garage door, “enable” or “disable” for a smoke alarm, “checkin” or “scan” for a bottle of soda. The direction of an <a>Action</a> is from the <a>Client</a> to the <a>Web Thing</a>.</dd>
+
+        <dt><dfn>Event</dfn></dt>
+        <dd><a title="event">Events</a> are notifications generated by a <a>Web Thing</a>. The direction of an <a>Event</a> is from <a title="Web Thing">Web Things</a> to <a title="Client">Clients</a>.</dd>
+
+        <dt><dfn>Property</dfn><dt>
+        <dd><a title="property">Properties</a> are values reflecting the current (and possibly historical) internal state of a <a>Web Thing</a>.</dd>
+      </dt>
+    </section>
+    
+    <section>
+      <h2>Web Things integration patterns</h2>
+      <p>
+        This part looks into the different ways of integrating physical objects to the Web to make them <a title="Web Thing">Web Things</a>. Once a pattern has been choosen the server of a <a>Web Thing</a> should follow the <a href="#web-things-requirements">Web Things Requirements</a> and the resources and payloads it uses should follow the <a href="#web-things-model">Web Things Model</a>.
+      </p>
+      <p>
+        Some physical entities might not expose a Web API themselves for various reasons (e.g., a ZigBee sensor node, or an Alarm clock accessible over Bluetooth only), in which case they are not <a title="Web Thing">Web Things</a> as such but they can use another <a>Web Thing</a> as a proxy or gateway to provide a Web API for them.
+      </p>
+      <p>
+        While the three integration patterns described below need to be taken into account it is worth noting that the requirements and model apply regardless of the integration pattern of choice.
+      </p>
+
+      <section>
+        <h2>Direct connectivity</h2>
+        <p>
+          In the most straightforward case, a <a>Web Thing</a> is simply a Web API that <a title="Client">Clients</a> send requests to. In some cases, the <a>Client</a> and the <a>Web Thing</a> can be on the same network or on different networks. In both cases, you are sending the same request to a <a>Web Thing</a>, the only difference is the URL to which you are sending the request (and obviously how the lamp gets the message).
+        </p>
+        <figure>
+          <img src="integration-direct.png" alt="When a Web Thing exposes a Web API, Clients can directly connect to it, potential through a local address if they are both on the same network" />
+          <figcaption>Direct connectivity between a Client and a Web Thing</figcaption>
+        </figure>
+      </section>
+
+      <section>
+        <h2>Gateway-based connectivity</h2>
+        <p>
+          Gateway based connectivity is used when a Thing cannot offer a Web API directly. In this case an intermediate, the gateway, exposes a Web API on its behalf, therefore acting as a proxy (or gateway depending on the complexity/layer of the translation).
+        </p>
+        <figure>
+          <img src="integration-gateways.png" alt="When a Web Thing cannot expose a Web API directly, Clients connect to it through a Gateway that exposes the Web API on their behalf" />
+          <figcaption>Gateway-based connectivity between a Client and a Web Thing</figcaption>
+        </figure>
+      </section>
+
+      <section>
+        <h2>Cloud-based connectivity</h2>
+        <p>
+          This third case is similar to <a href="#gateway-based-connectivity"></a>. However, in this case the gateway is a cloud service and not another device in situ.
+        </p>
+        <figure>
+          <img src="integration-cloud.png" alt="A cloud service may expose the Web API of a Web Thing for Clients to connect to it" />
+          <figcaption>Cloud-based connectivity between a Client and a Web Thing</figcaption>
+        </figure>
+      </section>
+    </section>
+
+    <section>
+      <h2>Web Things requirements</h2>
+      <p>
+        This part defines a set of rules for implementing <a title="Web Thing">Web Things</a>. It assumes that an <a href="#web-things-integration-pattern">Integration Pattern</a> was chosen and is extended by implementing the <a href="#web-things-model">Web Things Model</a>.
+      </p>
+      <p class="issue" title="@title">
+        I do not understand the above sentence. What does the Model have to do with these requirements? 
+      </p>
+
+      <section>
+        <h2>Level 0 – MUST</h2>
+        <p>
+          This section defines the Level 0 requirements – all of which MUST be in place in any <a>Web Thing</a> implementation, as all <a title="Client">Clients</a> will expect these constraints.
+        </p>
+
+        <section>
+          <h2>R0.1 – A <a>Web Thing</a> MUST at least be an HTTP/1.1 server</h2>
+          <p>
+            All <a title="Web Thing">Web Things</a> MUST support communication over HTTP/1.1 [[!RFC2616]]. When possible, <a title="Web Thing">Web Things</a> SHOULD also support HTTP/2 [[!RFC7540]].
+          </p>
+          <p class="note">
+            HTTP/1.1 is the most widely spread protocol over the Web and virtually any HTTP client or server implementation supports it, therefore it is likely that the majority of clients might not support HTTP/2 as of yet. This can be implemented directly on the <a>Web Thing</a> or can be provided via a proxy (see Integration Patterns).
+          </p>
+          <p class="note">
+            As a consequence, while <a title="Client">Clients</a> should not expect support for HTTP/2, communication with a <a>Web Thing</a> using HTTP/1.1 is always possible.
+          </p>
+        </section>
+
+        <section>
+          <h2>R0.2 – A <a>Web Thing</a> MUST have a root resource accessible via an HTTP URL</h2>
+          <p>
+            A <a>Web Thing</a> MUST have a so-called “root resource” identified by a HTTP URL (uses the HTTP protocol, therefore starts with <code>http://</code> or <code>https://</code>) that acts as the entry point for the <a>Web Thing</a> and enables the interaction with it. This root resource makes the <a>Web Thing</a> both uniquely identifiable and addressable over a network so that <a title="Client">Clients</a> can interact with it.
+          </p>
+          <p>
+            If the <a>Web Thing</a> is a device connected on a LAN (e.g. a printer, a lamp, etc.), the root URL of a <a>Web Thing</a> SHOULD be its IP address and standard HTTP port, so that, knowing only the IP address of a networked device that is a <a>Web Thing</a>, a <a>Client</a> can send an HTTP GET request on that IP address over the default port (80 for HTTP, 443 for HTTPS) to retrieve a representation of the Web Thing. This feature is envisioned to facilitate discovery of devices at the network level, without requiring an additional protocol.
+          </p>
+          <p class="note">
+            A <a>Web Thing</a> does not need to be publicly accessible over the Internet, as some Web of Things scenarios might only work within a local area network (LAN) as defined above. This means a root URL does not need to be public and can be simply the local IP address of a device.
+          </p>
+          <pre class="example" title="Valid root URLs" highlight="true">
+            http://gateway.api.com/devices/TV
+            http://kitchen-raspberry.device-lab.co.uk
+            https://192.168.10.10:9002
+            https://kitchen:3000/fridge/root
+          </pre>
+        </section>
+
+        <section>
+          <h2>R0.3 – A <a>Web Thing</a> MUST support <code>GET</code>, <code>POST</code>, <code>PUT</code> and <code>DELETE</code> HTTP verbs</h2>
+          <p>
+            The Web of Things aims to maximise interoperability by exposing the services of Things using REST [[REST]]. For this idea to come to reality, supporting certain HTTP verbs of the specification is required. Considering that the REST paradigm is based on resources and <abbr title="Create, Read, Update and Delete">CRUD</abbr> operations on them, a <a>Web Thing</a> MUST support <code>GET</code> for reading operations, <code>POST</code> for creation, <code>PUT</code> for updates and state changes, and <code>DELETE</code> for removal.
+          </p>
+        </section>
+
+        <section>
+          <h2>R0.4 – A <a>Web Thing</a> MUST implement HTTP status codes <code>200</code>, <code>400</code>, <code>500</code></h2>
+          <p>
+            Proper usage of HTTP/1.1 error codes is advisable. However, considering that some devices are restricted, only the following subset is mandatory:
+          </p>
+          <ul>
+            <li><strong>2XX Success</strong>. Returned for any successful action. The <a>Web Thing</a> MUST at least support the 200 OK response.</li>
+            <li><strong>4XX Client Error</strong>. This should be returned for any error due to the client that sent the request (from a wrong URL, to invalid authentication, or incorrect parameter). The <a>Web Thing</a> MUST at least support the 400 Bad Request error code.</li>
+            <li><strong>5XX Server Error</strong>. This should be used for any error on the <a>Web Thing</a> side when a request was valid but cannot be processed at this time for any reason, e.g. the <a>Web Thing</a> has a server error, etc. The <a>Web Thing</a> MUST at least support the 500 Internal Server Error error code.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>R0.5 – A <a>Web Thing</a> MUST support JSON as default representation</h2>
+          <p>
+            A <a>Web Thing</a> MUST always accept a valid JSON document [[!RFC7159]] as payload for request and always return a JSON representation when requested. If no <code>Accept:</code> HTTP header is specified in the request (or if the format is unknown or not supported), the <a>Web Thing</a> SHOULD return an appropriate error code, but it also MAY return JSON as default.
+          </p>
+          <p>
+            A <a>Web Thing</a> MAY support additional formats.
+          </p>
+          <p class="note">
+            A consequence of supporting JSON is that UTF-8 is the default encoding for payloads (see <a href="https://tools.ietf.org/html/rfc7159#section-8.1">Character Encoding</a> in the JSON specification [[!RFC7159]])
+          </p>
+        </section>
+
+        <section>
+          <h2>R0.6 – A <a>Web Thing</a> MUST support <code>GET</code> on its root URL</h2>
+          <p>
+            Because they all have a unique root URL and sometimes it is all we know about them, <a title="Web Thing">Web Things</a> MUST respond to HTTP <code>GET</code> requests on their root URL with their basic representation, so that <a title="Client">Clients</a> can use and understand it.
+          </p>
+          <p class="note">
+            The basic representation returned by an <a>Interoperable Web Thing</a> is defined in <a href="#web-things-model"></a>
+          </p>
+        </section>
+      </section>
+
+      <section>
+        <h2>Level 1 – SHOULD</h2>
+        <p>
+          Unless there are technical or practical limitations for not adhering to Level 1 constraints, <a title="Web Thing">Web Things</a> SHOULD support the following constraints.
+        </p>
+
+        <section>
+          <h2>R1.1 – A <a>Web Thing</a> SHOULD use secure HTTP connections (HTTPS)</h2>
+          <p>
+            Ideally, <a>Web Thing</a> SHOULD support secure connections with HTTP over TLS [[!RFC5246]]. The ideal case for security is to support only HTTP over TLS. <a>Web Thing</a> that are exposed on the Internet MUST always implement HTTP over TLS.
+          </p>
+          <p>
+            <a title="Web Thing">Web Things</a> MAY use other security mechanisms if they want to (in addition or in place of HTTPS). In some cases, it might be impossible or impractical to implement HTTPS over TLS (for example in pure intranet scenario), in which case using another security mechanism is still highly recommended.
+          </p>
+        </section>
+
+        <section>
+          <h2>R1.2 – A <a>Web Thing</a> SHOULD support additional HTTP status codes as needed</h2>
+          <p>
+            Especially for errors, <a>Web Thing</a> SHOULD support the most common HTTP status codes as applicable (<code>415 Invalid media type</code>, <code>403 Forbidden</code>, <code>201 Created</code>, <code>503 Unavailable</code>, etc.).
+          </p>
+          <p class="issue" title="@tidoust">
+            It is bad practice to have an open list in a normative statement, either drop the "etc." or drop the requirement altogether.
+          </p>
+        </section>
+
+        <section>
+          <h2>R1.3 – A <a>Web Thing</a> SHOULD implement the WebSocket Protocol</h2>
+          <p>
+            To support Thing push and Publication/Subscription (Pub/Sub) patterns a <a>Web Thing</a> SHOULD implement the WebSocket protocol [[!RFC6455]].
+          </p>
+          <p class="issue" title="@tidoust">
+            What is "Thing push"? I mean, if we use it, we need to define it first. Can we stick to Publication/Subscription only which is more self-explanatory?
+          </p>
+        </section>
+
+        <section>
+          <h2>R1.4 – A <a>Web Thing</a> SHOULD support the Web Things model</h2>
+          <p>
+            If possible, every <a>Web Thing</a> SHOULD implement the <a href="#web-things-model">Web Things Model</a>. It is not essential to use it for a device to be part of the Web of Things, but implementing it will lead to much better interoperability.
+          </p>
+          <p class="note">
+            An <a>Interoperable Web Thing</a> fulfills this requirement by definition. In other words, while this specification acknowledges the usefulness of the <a>Web Thing</a> level to accommodate legacy devices and very restricted scenarios, implementers are encouraged to implement <a title="Interoperable Web Thing">Interoperable Web Things</a>.
+          </p>
+        </section>
+      </section>
+
+      <section>
+        <h2>Level 2 – MAY</h2>
+        <p>
+          A <a>Web Thing</a> MAY support these rules, but are not expected to. It depends on the capabilities of the devices and other implementation aspects.
+        </p>
+
+        <section>
+          <h2>R2.1 – A <a>Web Thing</a> MAY support the HTTP <code>OPTIONS</code> verb for each of its resources</h2>
+          <p>
+            In particular, if possible the use of <code>PUT</code> and <code>PATCH</code> in addition to <code>POST</code> should be used for changing the value of a <a>Property</a> or sending an <a>Action</a> to the <a>Web Thing</a>.
+          </p>
+          <p class="issue" title="@tidoust">
+            I do not get the direct relationship between the requirement and the above sentence. Should the requirement rather be phrased as "A Web Thing MAY support additional HTTP verbs, notably PUT and PATCH, for each of its resource"?
+          </p>
+        </section>
+
+        <section>
+          <h2>R2.2 – A <a>Web Thing</a> MAY have a default machine-readable documentation</h2>
+          <p>
+            A <a>Web Thing</a> MAY provide its documentation in a machine-readable format. The choice of this machine-readable format is left to implementers.
+          </p>
+          <p class="issue" title="@tidoust">
+            What would be a machine-readable format? Any example?
+          </p>
+        </section>
+
+        <section>
+          <h2>R2.3 – A <a>Web Thing</a> MAY provide additional representation mechanisms (RDF, XML, JSON-LD)</h2>
+          <p>
+            A <a>Web Thing</a> MAY provide additional representations of its data and descriptions. JSON being the only mandatory representation, the rest of the formats are up to the implementers if needed for additional purposes. The Semantic Web Things Protocol defines extension points for this additional representation mechanisms.
+          </p>
+          <p class="issue" title="@tidoust">
+            What is the "Semantic Web Things Protocol" and where is it defined? If it refers to the API defined below, it would be worth expliciting here the extension points.
+          </p>
+        </section>
+
+        <section>
+          <h2>R2.4 – A <a>Web Thing</a> MAY offer an HTML interface/representation</h2>
+          <p>
+            A <a>Web Thing</a> MAY expose a pre-programmed HTML representation or <abbr title="User Interface">UI</abbr> that could be used under some conditions to integrate the <a>Web Thing</a> in dashboard environments.
+          </p>
+        </section>
+      </section>
+    </section>
+
+    <section>
+      <h2>Web Things model</h2>
+      <p>
+        This part defines the model, JSON payloads and REST API that an <a>Interoperable Web Thing</a> MUST implement to allow <a title="Client">Clients</a> to discover and use its properties on an automated basis. It assumes an <a href="#web-things-integration-pattern">Integration Pattern</a> and that the Web Thing follows the <a href="#web-things-requirements">Web Things Requirements</a>.
+      </p>
+      <p class="note">
+        An <a>Interoperable Web Thing</a> has a root resource accessible via an HTTP URL and supports HTTP <code>GET</code> requests on that URL (see <a href="#r0.2-a-web-thing-must-have-a-root-resource-accessible-via-an-http-url"></a> and <a href="#r0.6-a-web-thing-must-support-get-on-its-root-url"></a>). 
+      </p>
+      <p>
+        An <a>Interoperable Web Thing</a> MUST create a URL endpoint for all the resources that it exposes (the <a>Web Thing</a> itself, but also <a title="Action">Actions</a>, <a title="Property">Properties</a>, <a title="Event">Events</a>, etc.) and MUST include that URL in the JSON representation whenever possible, using the <code>id</code> field. Relative URLs are to be resolved against the URL of the resource that includes them. Implementers are encouraged to create a logical tree structure for resources and to use relative URLs to keep JSON payloads short, for instance:
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>URL</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>{wt}</code>
+            <td>The root resource URL</td>
+          </tr>
+          <tr>
+            <td><code>{wt}/properties/</code>
+            <td>The list of properties</td>
+          </tr>
+          <tr>
+            <td><code>{wt}/properties/{id}</code>
+            <td>A specific property</td>
+          </tr>
+          <tr>
+            <td><code>{wt}/actions/</code>
+            <td>The list of actions</td>
+          </tr>
+          <tr>
+            <td><code>{wt}/actions/{id}</code>
+            <td>A specific action</td>
+          </tr>
+          <tr>
+            <td><code>{wt}/actions/{id}/{actionId}</code>
+            <td>An execution of an action</td>
+          </tr>
+          <tr>
+            <td><code>{wt}/events/</code>
+            <td>The list of events</td>
+          </tr>
+          <tr>
+            <td><code>{wt}/events/{id}</code>
+            <td>A specific event</td>
+          </tr>
+          <tr>
+            <td><code>{wt}/*/subscriptions/</code>
+            <td>Subscriptions to a resource</td>
+          </tr>
+          <tr>
+            <td><code>{wt}/*/subscriptions/{id}</code>
+            <td>A specific subscription</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="issue" title="@tidoust">
+        I took the liberty to change the definition of ID to turn it into a pure URL, instead of an ID that is used to construct URLs, and to list the default URLs in the above implementation guidelines table. That seems more consistent with what we are trying to achieve. What do you think?
+      </p>
+
+      <section>
+        <h2>Common JSON fields</h2>
+        <p>
+          In response to an HTTP <code>GET</code> request on one of its resources (including the root resource), an <a>Interoperable Web Thing</a> MUST return a JSON representation of that resource that follows the JSON schema defined in the table below:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Field name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>id</code></td>
+              <td>String</td>
+              <td>The URL of this resource. Relative URLs are resolved against the URL of the enclosing resource.
+              <br/><strong>This field is required</strong>.</td>
+            </tr>
+            <tr>
+              <td><code>createdAt</code></td>
+              <td>String</td>
+              <td>Timestamp when this resource was created, following the ISO8601 notation [[!ISO8601]].</td>
+            </tr>
+            <tr>
+              <td><code>updatedAt</code></td>
+              <td>String</td>
+              <td>Timestamp when this resource was last updated, following the ISO8601 notation [[!ISO8601]].</td>
+            </tr>
+            <tr>
+              <td><code>name</code></td>
+              <td>String</td>
+              <td>A short human-readable name for the resource.</td>
+            </tr>
+            <tr>
+              <td><code>description</code></td>
+              <td>String</td>
+              <td>A human-readable description of the resource.</td>
+            </tr>
+            <tr>
+              <td><code>tags</code></td>
+              <td>[String]</td>
+              <td>An array of tags.</td>
+            </tr>
+            <tr>
+              <td><code>customFields</code></td>
+              <td>{"key":"value",...}</td>
+              <td>A JSON object with key-value pairs to store custom information about this resource.</td>
+            </tr>
+            <tr>
+              <td><code>links</code></td>
+              <td>Object</td>
+              <td>A JSON object that lists the sub-resources that this resource links to. See <a href="#links"></a> for details.</td>
+            </tr>
+          </tbody>
+        </table>
+        <pre class="example" title="Basic JSON payload">
+        {
+          "id":"myCar",
+          "name":"My super great car",
+          "description":"This is such a great car. Seriously!",
+          "createdAt":"2012-08-24T17:29:11.683Z", 
+          "updatedAt":"2012-08-24T17:29:11.683Z", 
+          "tags":["cart","device","test"],
+          "customFields":{
+              "size":"20",
+              "color":"blue"
+          },
+          "links":{
+              ... (see below)...
+          }
+          ...
+        </pre>
+        <p>
+          The JSON response MAY contain additional fields, depending on the type of resource being considered, check the <a href="#resources"></a> for details.
+        </p>
+      </section>
+
+      <section>
+        <h2>Links</h2>
+        <p>
+          A resource may link to a number of sub-resources. To enable the discovery of these sub-resources (as required by the <abbr title="Hypermedia as the Engine of Application State">HATEOAS</abbr> constraint of the REST application architecture), an <a>Interoperable Web Thing</a> SHOULD expose the sub-resources associated with a given resource using the HTTP <code>Link</code> header field [[!RFC5988]].
+        </p>
+        <p>
+          In particular, each link is defined by a <strong>relation type</strong>, the actual URL of the sub-resource, and a human-readable identifier for the relation. <a href="https://tools.ietf.org/html/rfc5988#section-6.2.2">Relation types</a> defined in [[!RFC5988]] may be used to characterize the relation with the sub-resource. Additionally, this specification defines the following relation types:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Relation name</th>
+              <th>Description</th>
+              <th>Section</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>properties</code></td>
+              <td>The properties of this resource.</td>
+              <td><a href="#properties"></a></td>
+            </tr>
+            <tr>
+              <td><code>events</code></td>
+              <td>The events that this resource can generate.</td>
+              <td><a href="#events"></a></td>
+            </tr>
+            <tr>
+              <td><code>actions</code></td>
+              <td>The actions that this resource can perform.</td>
+              <td><a href="#actions"></a></td>
+            </tr>
+            <tr>
+              <td><code>system</code></td>
+              <td>The system configurations and parameters of this resource.</td>
+              <td><a href="#system"></a></td>
+            </tr>
+            <tr>
+              <td><code>things</code></td>
+              <td>The <a title="Web Thing">Web things</a> proxied by this resource (if applicable).</td>
+              <td><a href="#things"></a></td>
+            </tr>
+            <tr>
+              <td><code>subscriptions</code></td>
+              <td>The endpoint to manage subscriptions to this resource.</td>
+              <td><a href="#subscriptions"></a></td>
+            </tr>
+            <tr>
+              <td><code>product</code></td>
+              <td>A link to a product definition for this Web Thing.</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><code>model</code></td>
+              <td>A link to the description of a resource.</td>
+              <td></td>
+          </tbody>
+        </table>
+        <p class="issue" title="@tidoust">
+          I added <code>model</code> to the list. I also removed the singular form <code>property</code> that appeared with question marks in the list of properties example. We might want to use Link HTTP headers but at the same time, it does not make a lot of sense to have the information appear in two different places.
+        </p>
+        <p>
+          An <a>Interoperable Web Thing</a> MAY use custom relation types using URLs as described in [[!RFC5988]].
+        </p>
+        <p>
+          If exposing the links using the <code>Link</code> HTTP header is not possible, an <a>Interoperable Web Thing</a> MAY use the <code>links</code> field of the JSON payload to expose these links. The keys of this object represent the relation type while each value describes the actual link as illustrated below.
+        </p>
+        <pre class="example" title="Links object model">
+        {
+          ...
+          "links":{
+            "&lt;relType&gt;":{
+              "link": "&lt;String&gt;",
+              "title": "&lt;String&gt;"
+            },
+            ...     
+          }
+          ... 
+        }
+        </pre>
+        <p>
+          The following fields define the actual link:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Field name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>link</code></td>
+              <td>String</td>
+              <td>The URL of the destination of the link.
+              <br/><strong>This field is required.</strong></td>
+            </tr>
+            <tr>
+              <td><code>title</code></td>
+              <td>String</td>
+              <td>A human-readable label of the destination of the link.
+              <br/><strong>This field is required.</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <pre class="example" title="Links object">
+          {
+            ... 
+            "links":{
+              "configurations":{
+                "link": "system/",
+                "title": "System configurations of this Web Thing."           
+              },
+              "properties": {
+                "link": "properties/",
+                "title": "Properties of this Web Thing."
+              },
+              "events": {
+                "link": "events/",
+                "title": "Events of this Web Thing."
+              },
+              "actions": {
+                "link": "actions/",
+                "title": "Actions of this Web Thing."
+              },
+              "meta": {
+                "link": "http://webofthings.org/schemas/web-thing/",
+                "title": "Metadata"
+              },
+              "help": {
+                "link": "http://webofthings.org/docs/pi/",
+                "title": "Documentation"
+              },
+              "ui": {
+                "link": "ui/",
+                "title": "User Interface"
+              },
+              "_myCustomLinkRelType":{
+                "link": "custom/",
+                "schema": "http://webofthings.org/schemas/custom.html",
+                "title": "My custom resource"
+              }   
+            }
+            ...
+          }
+        }
+        </pre>
+      </section>
+
+      <section>
+        <h2>Values</h2>
+        <p>
+          Several resources support values (particularly <a title="Event">Events</a>, <a title="Property">Properties</a>, and <a title="Action">Actions</a>). A <code>values</code> object contains the description of a set of values identified by their name. The description includes the value type, unit, and possible concrete values that the value can take. A <code>values</code> object is typically used to define the parameters a <a>Client</a> can use when it issues an <a>Action</a>, accesses the channels of a <a>Property</a>, or parses the parameters of an <a>Event</a>.
+        </p>
+        <p>
+          The following fields MAY be used to describe a value:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Field name</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>name</code></td>
+              <td>String</td>
+              <td>A human-readable caption for this value.
+              <br/><strong>This field is required.</strong></td>
+            </tr>
+            <tr>
+              <td><code>description</code></td>
+              <td>String</td>
+              <td>A human-readable description of this value.</td>
+            </tr>
+            <tr>
+              <td><code>type</code></td>
+              <td>String</td>
+              <td>The type of this value. The supported types are <code>integer</code>, <code>float</code>, <code>boolean</code>, <code>string</code>.</td>
+            </tr>
+            <tr>
+              <td><code>unit</code></td>
+              <td>String</td>
+              <td>The unit of this value, using one of the full names defined in the International System of Units [[!SI]].
+              <br/>Example: <code>"meter per second squared"</code></td>
+            </tr>
+            <tr>
+              <td><code>required</code></td>
+              <td>Boolean</td>
+              <td>Specifies whether this value is requried or optional (useful in descriptions of an <a>Action</a>).</td>
+            </tr>
+            <tr>
+              <td><code>minValue</code></td>
+              <td>Number</td>
+              <td>The minimal concrete value that this value can take.</td>
+            </tr>
+            <tr>
+              <td><code>maxValue</code></td>
+              <td>Number</td>
+              <td>The maximal concrete value of this value</td>
+            </tr>
+            <tr>
+              <td><code>enum</code></td>
+              <td>Object</td>
+              <td>Specifies a set of concrete values that this value can take, e.g.
+              <br/><code>{"LOCK":"Locks the door.", "UNLOCK":"unlocks the door."}</code></td>
+            </tr>
+          </tbody>
+        </table>
+        <pre class="example" title="Values object model">
+          {
+            ...
+            "values": {
+              "&lt;valueName&gt;":{
+                "name":"&lt;String&gt;",
+                "description":"&lt;String&gt;",
+                "type":"&lt;String&gt;",
+                "unit":"&lt;String&gt;",
+                "required":"&lt;Boolean&gt;",
+                "minValue":"&lt;Numeric&gt;",
+                "maxValue":"&lt;Numeric&gt;"
+              },
+              ...
+            }
+            ...
+          }
+        </pre>
+        <p>
+          The value name <code>timestamp</code> is reserved. An <a>Interoperable Web Thing</a> MUST append a <code>timestamp</code> set to the current date and time whenever it creates a value unless that <code>timestamp</code> is already provided. The <code>timestamp</code> field follows the ISO8601 notation [[!ISO8601]].
+        </p>
+        <p class="issue" title="@tidoust">
+          I think we should choose between <code>timestamp</code> and <code>createdAt</code> and use that throughout the spec.
+        </p>
+      </section>
+
+      <section>
+        <h2>Resources</h2>
+
+        <section>
+          <h2>HTTP verbs support</h2>
+          <p>
+            Ideally, an <a>Interoperable Web Thing</a> SHOULD support all end-points. The target column in the table below refers to <a href="#web-things-integration-patterns"></a> and is here as an indication of which type of Thing would typically implement these end points.
+          </p>
+          <p class="note">
+            The URLs used in this table are purely indicative as an <a>Interoperable Web Thing</a> may choose to use other URLs for them. The actual URLs are to be reported in the representation of the root resource in <code>Link</code> HTTP Headers or using the JSON <code>links</code> field as described in <a href="#links"></a>.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>REST URL</th>
+                <th>POST</th>
+                <th>GET</th>
+                <th>PUT</th>
+                <th>DELETE</th>
+                <th>OPTIONS</th>
+                <th>Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>{wt}</code></td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Things, Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/properties</code></td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Things, Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/properties/{id}</code></td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Things, Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/properties/{id}/model</code></td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Things, Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/actions</code></td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/actions/{id}</code></td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/actions/{id}/{actionId}</code></td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/actions/{id}/model</code></td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/events</code></td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/events/{id}</code></td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/events/{id}/{model}</code></td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/things</code></td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>-</td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/things/{id}</code></td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Gateways, Clouds</td>
+              </tr>
+              <tr>
+                <td><code>{wt}/*/subscriptions</code></td>
+                <td>-</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Things, Gateways, Clouds</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>Properties</h2>
+          <p>
+            A <a>Property</a> keeps track of a set of variables about a device (its location, the temperature sensor reading, etc.).
+          </p>
+          <p>
+            The <dfn>Property URL</dfn> is the result of resolving the <code>id</code> returned in the representation of a <a>Property</a> against the destination URL of the <code>properties</code> link that gave birth to it.
+          </p>
+
+          <section>
+            <h2>Retrieve a list of properties</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on the destination URL of a <code>properties</code> link, an <a>Interoperable Web Thing</a> MUST return an array of <a>Property</a> that the initial resource contains.
+            </p>
+            <pre class="example" title="List of properties">
+              HTTP Link headers returned in the response:
+              Link: &lt;subscriptions/&gt;; rel="subscriptions"
+              Link: &lt;http://webofthings.io/properties&gt;; rel="meta"
+
+              JSON response:
+              [
+                {
+                  "id":"temperature",
+                  "name":"Kitchen Temperature Sensor",
+                  "value":{
+                    "temp":22,
+                    "timestamp":"2015-06-14T14:30:00.000Z"
+                  }  
+                },
+                {
+                  "id":"status",
+                  "name":"Device Status",
+                  "value":{
+                    "status":"OK",
+                    "timestamp":"2015-06-14T14:30:00.000Z"
+                  }  
+                },
+                {
+                  "id":"acceleration",
+                  "name":"Acceleration",
+                  "value":{
+                    "x":22,
+                    "y":22.56,
+                    "z":1.4,
+                    "timestamp":"2015-06-14T14:30:00.000Z"
+                  }
+                },
+                {
+                  "id":"engineAngle",
+                  "name":"Engine Angle",
+                  "value":{
+                    "theta":2,
+                    "rho":-0.1,
+                    "timestamp":"2015-06-14T14:30:00.000Z"
+                  }  
+                }
+              ]
+            </pre>
+          </section>
+
+          <section>
+            <h2>Retrieve the value of a property</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on a <a>Property URL</a>, an <a>Interoperable Web Thing</a> MUST return an array that lists recent values of that <a>Property</a>.
+            </p>
+            <p class="issue" title="@tidoust">
+              Is "recent" the right term? What is the expectation with that list? Is there a way to retrieve only the last measure? Why not?
+            </p>
+            <pre class="example" title="Retrieve the last measures of an accelerometer property">
+              HTTP Link headers:
+              Link &lt;model/&gt;; rel="model"
+
+              JSON response:
+              [
+                {
+                  "x":11,
+                  "y":1,
+                  "z":-4.4,
+                  "timestamp":"2015-06-14T14:30:00.000Z"
+                },
+                {
+                  "x":3.4,
+                  "y":-1,
+                  "z":-4.6,
+                  "timestamp":"2015-06-14T14:00:00.000Z"
+                }
+              ]
+            </pre>
+          </section>
+
+          <section>
+            <h2>Retrieve the description of a specific property</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code> link exposed by a <a>Property</a>, an <a>Interoperable Web Thing</a> MUST return the description of the <a>Property</a>.
+              On top of <a href="#common-json-fields"></a>, the JSON representation used to describe a <a>Property</a> includes the following fields:
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Field name</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>values</code></td>
+                  <td>Object</td>
+                  <td>A description of the set of values that this resource contains.
+                  <br/>See <a href="#values"></a>.
+                  <br/><strong>This field is required.</strong></td>
+                </tr>
+              </tbody>
+            </table>
+            <pre class="example" title="Property description example">
+              HTTP Link headers:
+              Link: &lt;http://webofthings.org/properties/acceleration&gt;; rel="meta"
+
+              JSON response:
+              {
+                "id":"acceleration",
+                "name": "Acceleration",
+                "description": "A 3D acceleration sensor.",
+                "values":{
+                  "x":{
+                    "name":"Y-axis",
+                    "description":"The X dimension of the sensor",
+                    "unit":"meter per second squared"
+                  },
+                  "y":{
+                    "name":"Y-axis",
+                    "description":"The Y dimension of the sensor",
+                    "unit":"meter per second squared"
+                  },
+                  "z":{
+                    "name":"Z-axis",
+                    "description":"The Z dimension of the sensor",
+                    "unit":"meter per second squared"
+                  }
+                },
+                "tags":["sensor","public"]
+              }
+            </pre>
+            <p>
+              If allowed by the device, a <a>Client</a> can update the model of a <a>Property</a> by sending an HTTP <code>PUT</code> request to the same URL, with the new document as request body.
+            </p>
+            <p class="issue" title="@tidoust">
+              When is that <code>PUT</code> useful?
+            </p>
+          </section>
+
+          <section>
+            <h2>Update a specific property</h2>
+            <p>
+              In response to an HTTP <code>POST</code> request on a <a>Property URL</a> with an array of values as request body, an <a>Interoperable Web Thing</a> MUST either reject the request with the appropriate status code (e.g. because the <a>Client</a> is unauthenticated or because the <a>Property</a> is read-only) or store the provided value(s) as new concrete values for the <a>Property</a>.
+            </p>
+            <pre class="example" title="Update the temperature property">
+              --&gt; REQUEST
+              POST {wt}/properties/temperature/
+              [
+                {
+                  "temp":24
+                }
+              ]
+
+
+              &lt;-- RESPONSE
+              201 Created
+              Location: {wt}/properties/temperature/
+              [
+                {
+                  "temp":24,
+                  "timestamp":"2015-06-14T14:30:00.000Z"
+                }
+              ]
+            </pre>
+            <p class="issue" title="@tidoust">
+              The <code>Location</code> URL returned in the 201 response seems wrong: that URL already existed before the request so has not been created. That should rather be <code>{wt}/properties/temperature/{someid}</code> if we want to expose the URL or we should use a <code>PUT</code> request.
+              <br/>Actually, the question is: why allow passing an array instead of just a single value?
+            </p>
+          </section>
+
+          <section>
+            <h2>Update multiple properties at once</h2>
+            <p>
+              In response to an HTTP <code>POST</code> request on the destination URL of a <code>properties</code> link, an <a>Interoperable Web Thing</a> MUST either reject the request with the appropriate status code or store the provided values as new concrete values for each of the provided <a title="Property">Properties</a>.
+            </p>
+            <pre class="example" title="Update multiple properties at once">
+              --&gt; REQUEST
+              POST {wt}/properties/
+              [
+                {
+                  "id":"temperature",
+                  "value":{
+                    "temp":24,
+                    "timestamp":"2015-06-14T14:30:00.000Z"
+                  }
+                },
+                {
+                  "id":"acceleration",
+                  "value":{
+                    "x":-22,
+                    "y":2.1,
+                    "z":3,
+                    "timestamp":"2015-06-14T14:30:00.000Z"
+                  }
+                }
+              ]
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <h2>Events</h2>
+          <p>
+            On top of <a href="#common-json-fields"></a>, the JSON representation used to describe an <a>Event</a> includes the following fields:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Field name</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>values</code></td>
+                <td>Object</td>
+                <td>A description of the set of values that an instance of this <a>Event</a> will contain.
+                <br/>See <a href="#values"></a>.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            The <dfn>Event URL</dfn> is the result of resolving the <code>id</code> returned in an <a>Event</a> description against the destination URL of the <code>events</code> link that gave birth to it.
+          </p>
+
+          <section>
+            <h2>Retrieve a list of events</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on the destination URL of an <code>events</code> link exposed by a resource, an <a>Interoperable Web Thing</a> MUST return an array of <a>Event</a> descriptions that the initial resource may fire.
+            </p>
+            <pre class="example" title="List of events">
+              HTTP Link headers returned in the response:
+              Link: &lt;subscriptions/&gt;; rel="subscriptions"
+              Link: &lt;http://webofthings.org/events/&gt;; rel="meta"
+
+              JSON response:
+              [
+                {
+                  "id":"deviceError",
+                  "name":"Device Error"
+                }, 
+                {
+                  "id":"batteryLow",
+                  "name":"Low Battery"
+                },
+                {
+                  "id":"myCustomEventType",
+                  "name":"My Event"
+                }
+              ]
+            </pre>
+          </section>
+
+          <section>
+            <h2>Retrieve the recent history of a specific event type</h2>
+            <p class="issue" title="@tidoust">
+              I'm a bit surprised by events here. I would have expected events to be "fire and forget". Here, a Web Thing would need to keep track of events that were fired. Said differently, there is not a lot of differences between events and properties for the time being.
+            </p>
+            <p>
+              In response to an HTTP <code>GET</code> request on an <a>Event URL</a>, an <a>Interoperable Web Thing</a> MUST return an array that lists recent <a title="Event">Events</a> that were fired by the underlying resource.
+            </p>
+            <pre class="example" title="Retrieve the last measures of an accelerometer property">
+              HTTP Link headers:
+              Link: &lt;http://webofthings.org/events/batteryLow&gt;; rel="meta" 
+              Link: &lt;model/&gt;; rel="model"
+
+              JSON response:
+              [
+                {
+                  "id":"56",
+                  "type":"batteryLow",
+                  "name":"Low Battery",
+                  "timestamp":"2015-06-14T18:33:25.938Z",
+                  "value":{
+                    "state":"CRITICAL"
+                  },
+                  "tags":["alert"]
+                },
+                {
+                  "id":"55",
+                  "type":"batteryLow",
+                  "name":"Low Battery",
+                  "timestamp":"2015-06-12T12:30:22.172Z",
+                  "value":{
+                    "state":"REPLACE"
+                  },
+                  "tags":["warning"]
+                }
+              ]
+            </pre>
+          </section>
+
+          <section>
+            <h2>Retrieve the description of a specific event</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code> link exposed by an <a>Event</a>, an <a>Interoperable Web Thing</a> MUST return the description of the <a>Event</a>. The JSON representation should be the same as the one returned for that <a>Event</a> in <a href="#retrieve-a-list-of-events"></a>.
+            </p>
+            <pre class="example" title="Event description example">
+              HTTP Link headers:
+              Link: &lt;http://webofthings.org/events/batteryLow&gt;; rel="meta" 
+
+              JSON response:
+              {
+                "id":"batteryLow",
+                "name":"Low Battery",  
+                "description":"Triggered once when battery drops below 2.8v.",
+                "values":{
+                  "state":{
+                    "type":"String",
+                    "enum":{
+                      "REPLACE":"It's time to replace the battery.",
+                      "CRITICAL":"This device will die anytime soon"
+                    } 
+                  }
+                },
+                "customFields":{
+                  "status":"active"
+                } 
+              }
+            </pre>
+            <p>
+              If allowed by the device, a <a>Client</a> can update the model of an <a>Event</a> by sending an HTTP <code>PUT</code> request to the same URL, with the new document as request body.
+            </p>
+          </section>
+
+          <section>
+            <h2>Create a new Event</h2>
+            <p>
+              In response to an HTTP <code>POST</code> request on an <a>Event URL</a> with an event value as request body, an <a>Interoperable Web Thing</a> MUST either reject the request with the appropriate status code or fire the provided value as event on the device.
+            </p>
+            <p>
+              This mechanism is mainly intended for cloud-based Web Things, where things relay their events.
+            </p>
+            <p class="issue" title="@tidoust">
+              I don't understand when creating an event could be useful. Could you clarify?
+            </p>
+            <pre class="example" title="Fire a batteryLow event">
+              --&gt; REQUEST
+              POST {wt}/events/batteryLow/
+              {
+                "timestamp":"2015-06-14T18:33:25.938Z",
+                "value":{
+                  "state":"CRITICAL"
+                },
+                "tags":["alert"]
+              }
+
+              &lt;-- RESPONSE
+              201 Created
+              Location: {wt}/events/temperature/56
+              {
+                "id":"56",
+                "type":"batteryLow",
+                "name":"Low Battery",
+                "timestamp":"2015-06-14T18:33:25.938Z",
+                "value":{
+                  "state":"CRITICAL"
+                },
+                "tags":["alert"]
+              }
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <h2>Actions</h2>
+          <p>
+            On top of <a href="#common-json-fields"></a>, the JSON representation used to describe an <a>Action</a> includes the following fields:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Field name</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>values</code></td>
+                <td>Object</td>
+                <td>A description of the parameters that his action accepts.
+                <br/>See <a href="#values"></a>.
+                <br/><strong>This field is required.</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            The <dfn>Action URL</dfn> is the result of resolving the <code>id</code> returned in an <a>Action</a> description against the destination URL of the <code>actions</code> link that gave birth to it.
+          </p>
+
+          <section>
+            <h2>Retrieve a list of actions</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on the destination URL of an <code>actions</code> link exposed by a resource, an <a>Interoperable Web Thing</a> MUST return an array of <a>Action</a> descriptions that the initial resource may achieve.
+            </p>
+            <pre class="example" title="List of actions">
+              HTTP Link headers returned in the response:
+              Link: <http://webofthings.org/actions/upgradefirmware>; rel="meta"
+
+              JSON response:
+              [
+                {
+                  "id":"upgradeFirmware",
+                  "name":"Upgrade Device Firmware"  
+                },
+                {
+                  "id":"reboot",
+                  "name":"Reboot"  
+                }
+              ]
+            </pre>
+          </section>
+
+          <section>
+            <h2>Retrieve recent executions of a specific action</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on an <a>Action URL</a>, an <a>Interoperable Web Thing</a> MUST return an array that lists the recent executions of a specific <a>Action</a>.
+            </p>
+            <p>
+              On top of <a href="#common-json-fields"></a>, the JSON representation used to describe the execution of an <a>Action</a> includes the following fields:
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Field name</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>status</td>
+                  <td>String</td>
+                  <td>The execution status. One of <code>pending</code>, <code>executing</code>, <code>completed</code> or <code>failed</code></td>
+                </tr>
+              </tbody>
+            </table>
+            <pre class="example" title="Retrieve the recent executions of a specific action">
+              HTTP Link headers:
+              Link: &lt;http://webofthings.org/actions/upgradefirmware&gt;; rel="meta"
+              Link: &lt;model/&gt;; rel="model"
+
+              JSON response:
+              [
+                {
+                  "id":"223",
+                  "value":{
+                    "delay":30,
+                    "mode":"SOFT"
+                  },
+                  "status":"executing"
+                  "timestamp":"2015-06-14T18:33:25.938Z"
+                },
+                {
+                  "id":"222",
+                  "value":{
+                    "delay":60,
+                    "mode":"FORCE"
+                  },
+                  "status":"completed"
+                  "timestamp":"2015-06-14T14:22:23.233Z"
+                }
+              ]
+            </pre>
+          </section>
+
+          <section>
+            <h2>Retrieve the description of a specific action</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code> link exposed by an <a>Action</a>, an <a>Interoperable Web Thing</a> MUST return the description of the <a>Action</a>. The JSON representation should be the same as the one returned for that <a>Action</a> in <a href="#retrieve-a-list-of-actions"></a>.
+            </p>
+            <pre class="example" title="Event description example">
+              HTTP Link headers:
+              Link: &lt;http://webofthings.org/events/batteryLow&gt;; rel="meta" 
+
+              JSON response:
+              {
+                "id":"batteryLow",
+                "name":"Low Battery",  
+                "description":"Triggered once when battery drops below 2.8v.",
+                "values":{
+                  "state":{
+                    "type":"String",
+                    "enum":{
+                      "REPLACE":"It's time to replace the battery.",
+                      "CRITICAL":"This device will die anytime soon"
+                    } 
+                  }
+                },
+                "customFields":{
+                  "status":"active"
+                } 
+              }
+            </pre>
+            <p>
+              If allowed by the device, a <a>Client</a> can update the model of an <a>Event</a> by sending an HTTP <code>PUT</code> request to the same URL, with the new document as request body.
+            </p>
+          </section>
+
+          <section>
+            <h2>Execute an action</h2>
+            <p>
+              In response to an HTTP <code>POST</code> request on an <a>Action URL</a> with valid parameters as request body, an <a>Interoperable Web Thing</a> MUST either reject the request with the appropriate status code or queue a task to run the action and return the status of that action in a <code>201 Created</code> response. The action may not run immediately. The <code>Location</code> HTTP header identifies the URL to use to pull for updates on the action's status.
+            </p>
+            <p class="note">
+              This is how a <a>Client</a> sends a command to a device.
+            </p>
+            <pre class="example" title="Schedule a reboot">
+              --&gt; REQUEST
+              POST {wt}/actions/reboot
+              {
+                "delay":50,
+                "mode":"debug"
+              }
+
+              &lt;-- RESPONSE
+              201 Created
+              Location: {wt}/actions/reboot/233
+              {
+                "id":"233",
+                "value":{
+                  "delay":50,
+                  "mode":"debug"
+                },
+                "status":"executing",
+                "timestamp":"2015-06-14T14:30:00.000Z"
+              }
+            </pre>
+          </section>
+
+          <section>
+            <h2>Retrieve the status of an action</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on the URL targeted by the <code>Location</code> HTTP header returned in response to the request to execute an action, an <a>Interoperable Web Thing</a> MUST return the status of this action or a <code>404 Not Found</code> status code if the action's status is no longer available.
+            </p>
+          </section>
+        </section>
+
+        <section>
+          <h2>System</h2>
+          <p>
+            A <dfn>System resource</dfn> specifies all the configurations and system properties that an <a>Interoperable Web Thing</a> exposes. For example, it can specify what interfaces it has, the version of its firmware, etc.
+          </p>
+          
+          <section>
+            <h2>Retrieve the system configuration</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on the destination URL of a <code>system</code> link, an <a>Interoperable Web Thing</a> MUST return a representation of the underlying <a>System resource</a>.
+            </p>
+            <p class="note">
+              This proposal does not attempt to standardize a common vocabulary for configuration parameters. Implementers should rely on custom vocabularies, using the <code>customFields</code> JSON field.
+            </p>
+            <pre class="example" title="System configuration">
+              {
+                "id": "system",
+                "customFields":{
+                  firmwareVersion": "4.0",
+                  "upSince": "2015-10-31T23:59:59.000Z",
+                  "_connections":{  
+                    "ip": "198.39.3.2",
+                    "port": 8585,
+                    "rootUrl": "http://localhost:8585/",
+                    "publicUrl": "http://devices.webofthings.io/"       
+                  },
+                  "_identifiers":{
+                    "serialNumber":"AX2332-00021",
+                    "ean":"9399392392"
+                  },
+                  "_myCustomMeta1":{},
+                  "_myCustomMeta2":{}
+                }
+              }
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <h2>Things</h2>
+          <p>
+            A <a>Web Thing</a> may proxy other <a title="Web Thing">Web Things</a>. For instance, it is expected that gateways and cloud services will proxy a number of third party devices. On top of <a href="#common-json-fields"></a>, the JSON representation used to describe a link to another thing includes the following fields:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Field name</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>rootUrl</code></td>
+                <td>String</td>
+                <td>The URL of the root resource of the Web Thing if it is different from <code>{wt}/thing/{id}</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <section>
+            <h2>Retrieve a list of things</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on the destination URL of a <code>things</code> link, an <a>Interoperable Web Thing</a> MUST return an array of things descriptions.
+            </p>
+            <pre class="example" title="List of things proxied by a device">
+            [
+              {
+                "id":"982tjqogeih",
+                "name":"Shopping Cart"
+              },  
+              {
+                "id":"2398h87wt489foz",
+                "name":"Shopping Cart",
+                "rootUrl":"/pi",
+                "description":"Shopping Cart that updates its location as it moves"
+              },  
+              {
+                "id":"p9qrnc89w48oh",
+                "name":"Shopping Cart",
+                "rootUrl":"https://192.168.0.6/",
+                "description":"LAN-connected gateway to Lamp #4."
+              }
+            ]
+            </pre>
+            <p class="issue" title="@tidoust">
+              So, if an <code>id</code> is to be interpreted as a URL, <code>rootUrl</code> is not needed here, and the ID should rather be the actual URL of these things.
+            </p>
+          </section>
+        </section>
+
+        <section>
+          <h2>Subscriptions</h2>
+          <p>
+            A <dfn>Subscription resource</dfn> allows to manage publication/subscription type of subscription to a given resource. Such a resource may be appended to any other resource exposed by an <a>Interoperable Web Thing</a>. In particular, an <a>Interoperable Web Thing</a> SHOULD enable subscriptions to <a title="Event">Events</a> and <a title="Property">Properties</a>.
+          </p>
+          <p>
+            On top of <a href="#common-json-fields"></a>, the JSON representation used to describe a subscription includes the following fields:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Field name</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>subscriberId</code></td>
+                <td>String</td>
+                <td>A unique identifier for the subscriber
+                <br/><strong>This field is required.</strong></td>
+              </tr>
+              <tr>
+                <td><code>type</code></td>
+                <td>String</td>
+                <td>The type of connection used to exchange updates with the subscriber. One of <code>httpCallback</code> or <code>websockets</code></td>
+              </tr>
+              <tr>
+                <td><code>resource</code></td>
+                <td>String</td>
+                <td>The URL of the resource whose changes the subscriber is subscribed to.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <section>
+            <h2>Retrieve a list of subscriptions</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on the destination URL of a <code>subscriptions</code> link, an <a>Interoperable Web Thing</a> MUST return the array of subscriptions to the underlying resource.
+            </p>
+            <pre class="example" title="List of subscriptions">
+            [
+              {
+                "id":"2349",
+                "subscriberId":"ServiceObject-123213213",
+                "type":"httpCallback",
+                "resource":"/properties/temperature",
+                "customFields":{
+                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback" 
+                }
+              },
+              {
+                "id":"2350",
+                "subscriberId":"ServiceObject-123213213",
+                "type":"websockets",
+                "resource":"/properties/location",      
+                "customFields":{
+                  "websocketUrl":"wss://www.compose-project.eu/WebObject-2423529879879875/streams/location"
+                }
+              }
+            ]
+            </pre>
+            <p>
+              The <dfn>Subscription URL</dfn> is the result of resolving the <code>id</code> returned in a <a>Subscription resource</a> description against the destination URL of the <code>subscriptions</code> link that gave birth to it.
+            </p>
+          </section>
+
+          <section>
+            <h2>Retrieve information about a specific subscription</h2>
+            <p>
+              In response to an HTTP <code>GET</code> request on a <a>Subscription URL</a>, an <a>Interoperable Web Thing</a> MUST return a JSON representation of the subscription. The JSON representation should be the same as the one returned for that subscription in <a href="#retrieve-a-list-of-subscriptions"></a>.
+            </p>
+            <pre class="example" title="Retrieve information about a specific subscription">
+              {
+                "id":"2349",
+                "subscriberId":"ServiceObject-123213213",
+                "type":"httpCallback",
+                "resource":"/properties/temperature",
+                "customFields":{
+                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback" 
+                }
+              }
+            </pre>
+          </section>
+
+          <section>
+            <h2>Create a subscription</h2>
+            <p>
+              In response to an HTTP <code>POST</code> request on the destination URL of a <code>subscriptions</code> link with a valid subscription description at request body, an <a>Interoperable Web Thing</a> MUST either reject the request with an appropriate status code or create the subscription and return available information about that subscription in a <code>201 Created</code> HTTP response. The <code>Location</code> HTTP header identified the URL of the created subscription.
+            </p>
+            <p class="issue" title="@tidoust">
+              The mechanism by which a Web Thing is to "create the subscription" should be defined for HTTP and Websockets
+            </p>
+            <pre class="example" title="Subscribe to a resource">
+              --&gt; REQUEST
+              POST {wt}/events/batteryLow/subscriptions
+              {
+                "subscriberId":"ServiceObject-123213213",
+                "type":"httpCallback",
+                "customFields":{
+                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback"
+                }
+              }
+
+              &lt;-- RESPONSE
+              201 CREATED
+              Location: {wt}/events/batteryLow/subscriptions/493
+              {
+                "id":"493",
+                "subscriberId":"ServiceObject-123213213",
+                "type":"httpCallback",
+                "createdAt":"2015-06-23T16:03:00.000Z",
+                "resource":"/events/batteryLow",
+                "customFields":{
+                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback"
+                }
+              }
+            </pre>
+          </section>
+        </section>
+      </section>
+    </section>
+
+    <section class="appendix">
+      <h2>Examples</h2>
+
+      <section>
+        <h2>Interoperable Web Thing</h2>
+        <p>Here is a possible representation of the root resource of an <a>Interoperable Web Thing</a>:</p>
+        <pre class="example" title="Web Thing root resource">
+          HTTP Link headers:
+          Link: &lt;product/&gt;; rel="product"
+          Link: &lt;system/&gt;; rel="system"
+          Link: &lt;properties/&gt;; rel="properties"
+          Link: &lt;events/&gt;; rel="events"
+          Link: &lt;actions/&gt;; rel="actions"
+          Link: &lt;meta/&gt;; rel="meta"
+          Link: &lt;help/&gt;; rel="help"
+          Link: &lt;ui/&gt;; rel="ui"
+
+          JSON response:
+          {
+            "id":"cart1",
+            "createdAt":"2012-08-24T17:29:11.683Z", 
+            "updatedAt":"2012-08-24T17:29:11.683Z", 
+            "name":"Shopping Cart",
+            "description":"Shopping Cart that updates its location as it moves",
+            "tags":["cart","device","test"],
+            "customFields":{"size":"20","color":"blue"},
+            "links":{
+              "product": {
+                "link" : "http://api.evrythng.com/products/8838830wfoifj3jfo4i",
+                "title" : "Product this Web Thing is based on"
+              },
+              "system": {
+                "link": "system/",
+                "title": "Configurations of this Web Thing."      
+              },
+              "properties": {
+                "link": "properties/",
+                "title": "Properties of this Web Thing."
+              },
+              "events": {
+                "link": "events/",
+                "title": "Events of this Web Thing."
+              },
+              "actions": {
+                "link": "actions/",
+                "title": "Actions of this Web Thing."
+              },
+              "meta": {
+                "link": "http://w3c.org/schemas/webthing/",
+                "title": "Metadata"
+              },
+              "help": {
+                "link": "http://webofthings.org/docs/pi/",
+                "title": "Documentation"
+              },
+              "ui": {
+                "link": "ui/",
+                "title": "User Interface"
+              },
+              "http://webofthings.org/schemas/custom.html": {
+                "link": "custom/",
+                "title": "My custom resource"
+              }   
+            }
+          }
+        </pre>
+      </section>
+    </section>
+
+    <section>
+      <h2>Acknowledgments</h2>
+      <p>
+        This work is supported by the European Union's 7th Research Framework Programme (FP7/2013-2015) under grant agreement nº317862 – <a href="http://www.compose-project.eu/">COMPOSE</a>).
+      </p>
+      <p>
+        The authors would like to thank the participants of the <a href="http://www.w3.org/WoT/IG/">W3C Web of Things Interest Group</a> who have provided feedback on initial drafts of this submission.
+      </p>
+    </section>
+  </body>
+</html>
