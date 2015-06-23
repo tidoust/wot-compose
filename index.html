@@ -73,6 +73,12 @@
     </style>
   </head>
   <body>
+    <div class="issue" title="@tidoust">
+      <ul>
+        <li>There is no text that explains explains how the REST API could be mapped to WebSockets. Is that envisioned? Should we say something about it, e.g. in an Appendix?</li>
+        <li>Similarly, should there be a short section on service composition that could perhaps describe how the COMPOSE project makes use of a similar model?</li>
+      </ul>
+    </div>
     <section id='abstract'>
       <p>
         This document aims to standardize the Web of Things by defining a set of specific implementation and resource design guidelines to be followed by anyone wanting to create a product, device, service, or application for the Web of Things.
@@ -162,6 +168,10 @@
       <p>
         While the three integration patterns described below need to be taken into account it is worth noting that the requirements and model apply regardless of the integration pattern of choice.
       </p>
+      <p class="issue" title="@tidoust">
+        Would it be possible to produce images without embedded captions? Not a big deal if not.
+        <br/>Also, note there is a typo in "gateway" in the second diagram.
+      </p>
 
       <section>
         <h2>Direct connectivity</h2>
@@ -202,9 +212,19 @@
       <p>
         This part defines a set of rules for implementing <a title="Web Thing">Web Things</a>. It assumes that an <a href="#web-things-integration-pattern">Integration Pattern</a> was chosen and is extended by implementing the <a href="#web-things-model">Web Things Model</a>.
       </p>
-      <p class="issue" title="@title">
+      <p class="issue" title="@tidoust">
         I do not understand the above sentence. What does the Model have to do with these requirements? 
       </p>
+      <div class="issue" title="@tidoust">
+        <p>Changes I made in this section include:</p>
+        <ul>
+          <li>Dropped "If a WT implements all of them, its compatibility with any other Web of Things entity is maximized." from Level 0 introduction. By definition, a WT implements all of them and a standard is de facto meant to increase interoperability.</li>
+          <li>Turned SHOULD into MUST in R0.4 since that's what the requirement says.</li>
+          <li>It's "HTTP over TLS", not "HTTPS over TLS".</li>
+          <li>Dropped "However, for compatibility, WT Clients MUST support HTTP over TLS." The spec may contain guidelines for Clients, but that is not a conformance class so normative statements cannot apply to them.</li>
+          <li>Similarly, dropped "and clients should implement the WebSockets API."</li>
+        </ul>
+      </div>
 
       <section>
         <h2>Level 0 – MUST</h2>
@@ -1553,7 +1573,7 @@
             ]
             </pre>
             <p class="issue" title="@tidoust">
-              So, if an <code>id</code> is to be interpreted as a URL, <code>rootUrl</code> is not needed here, and the ID should rather be the actual URL of these things.
+              So, if an <code>id</code> is to be interpreted as a URL, <code>rootUrl</code> is not needed here, and the ID should rather be the actual URL of these things. Can I drop <code>rootUrl</code>?
             </p>
           </section>
         </section>
