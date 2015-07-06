@@ -133,7 +133,9 @@
         An <a>Interoperable Web Thing</a> conforms to this specification if it follows the statements defined in <a href="#web-things-requirements"></a> and <a href="#web-things-model"></a>.
       </p>
       <p class="issue" title="@tidoust">
-        Any better name for "Interoperable Web Thing" perhaps? The whole purpose of standards is to improve interoperability, so a basic Web Thing should already qualify as an interoperable one.
+        Any better name for "Interoperable Web Thing" perhaps? The whole purpose of standards is to improve interoperability, so a basic Web Thing should already qualify as an interoperable one. 
+
+        We'll change this. 
       </p>
     </section>
 
@@ -167,10 +169,6 @@
       </p>
       <p>
         While the three integration patterns described below need to be taken into account it is worth noting that the requirements and model apply regardless of the integration pattern of choice.
-      </p>
-      <p class="issue" title="@tidoust">
-        Would it be possible to produce images without embedded captions? Not a big deal if not.
-        <br/>Also, note there is a typo in "gateway" in the second diagram.
       </p>
 
       <section>
@@ -214,17 +212,9 @@
       </p>
       <p class="issue" title="@tidoust">
         I do not understand the above sentence. What does the Model have to do with these requirements? 
+
+        Remove this. 
       </p>
-      <div class="issue" title="@tidoust">
-        <p>Changes I made in this section include:</p>
-        <ul>
-          <li>Dropped "If a WT implements all of them, its compatibility with any other Web of Things entity is maximized." from Level 0 introduction. By definition, a WT implements all of them and a standard is de facto meant to increase interoperability.</li>
-          <li>Turned SHOULD into MUST in R0.4 since that's what the requirement says.</li>
-          <li>It's "HTTP over TLS", not "HTTPS over TLS".</li>
-          <li>Dropped "However, for compatibility, WT Clients MUST support HTTP over TLS." The spec may contain guidelines for Clients, but that is not a conformance class so normative statements cannot apply to them.</li>
-          <li>Similarly, dropped "and clients should implement the WebSockets API."</li>
-        </ul>
-      </div>
 
       <section>
         <h2>Level 0 – MUST</h2>
@@ -330,6 +320,8 @@
           </p>
           <p class="issue" title="@tidoust">
             It is bad practice to have an open list in a normative statement, either drop the "etc." or drop the requirement altogether.
+
+            We'll remove this.
           </p>
         </section>
 
@@ -340,6 +332,8 @@
           </p>
           <p class="issue" title="@tidoust">
             What is "Thing push"? I mean, if we use it, we need to define it first. Can we stick to Publication/Subscription only which is more self-explanatory?
+
+            Explain this better here. 
           </p>
         </section>
 
@@ -367,6 +361,9 @@
           </p>
           <p class="issue" title="@tidoust">
             I do not get the direct relationship between the requirement and the above sentence. Should the requirement rather be phrased as "A Web Thing MAY support additional HTTP verbs, notably PUT and PATCH, for each of its resource"?
+
+            Turn this into a NOTE in the R0.X must use put and co.
+
           </p>
         </section>
 
@@ -377,6 +374,8 @@
           </p>
           <p class="issue" title="@tidoust">
             What would be a machine-readable format? Any example?
+
+            Turn this into a "WT should have a human-readable doc" and move this to the should section. 
           </p>
         </section>
 
@@ -387,6 +386,8 @@
           </p>
           <p class="issue" title="@tidoust">
             What is the "Semantic Web Things Protocol" and where is it defined? If it refers to the API defined below, it would be worth expliciting here the extension points.
+         	
+         	Typo from us. Change this. 
           </p>
         </section>
 
@@ -460,9 +461,7 @@
           </tr>
         </tbody>
       </table>
-      <p class="issue" title="@tidoust">
-        I took the liberty to change the definition of ID to turn it into a pure URL, instead of an ID that is used to construct URLs, and to list the default URLs in the above implementation guidelines table. That seems more consistent with what we are trying to achieve. What do you think?
-      </p>
+
 
       <section>
         <h2>Common JSON fields</h2>
@@ -603,6 +602,9 @@
         </table>
         <p class="issue" title="@tidoust">
           I added <code>model</code> to the list. I also removed the singular form <code>property</code> that appeared with question marks in the list of properties example. We might want to use Link HTTP headers but at the same time, it does not make a lot of sense to have the information appear in two different places.
+
+          VT: Redefine the relation between link headers and the link object in json.
+
         </p>
         <p>
           An <a>Interoperable Web Thing</a> MAY use custom relation types using URLs as described in [[!RFC5988]].
@@ -777,7 +779,7 @@
           The value name <code>timestamp</code> is reserved. An <a>Interoperable Web Thing</a> MUST append a <code>timestamp</code> set to the current date and time whenever it creates a value unless that <code>timestamp</code> is already provided. The <code>timestamp</code> field follows the ISO8601 notation [[!ISO8601]].
         </p>
         <p class="issue" title="@tidoust">
-          I think we should choose between <code>timestamp</code> and <code>createdAt</code> and use that throughout the spec.
+          I think we should choose between <code>timestamp</code> and <code>createdAt</code> and use that throughout the spec. 
         </p>
       </section>
 
@@ -1002,6 +1004,8 @@
             </p>
             <p class="issue" title="@tidoust">
               Is "recent" the right term? What is the expectation with that list? Is there a way to retrieve only the last measure? Why not?
+
+              VT: it's correct, but we need to add pagination here (and how we can get the last/filtered content).
             </p>
             <pre class="example" title="Retrieve the last measures of an accelerometer property">
               HTTP Link headers:
@@ -1083,6 +1087,8 @@
             </p>
             <p class="issue" title="@tidoust">
               When is that <code>PUT</code> useful?
+
+              VT: update the model. Maybe add a note that this is mainly for clouds. 
             </p>
           </section>
 
@@ -1205,6 +1211,10 @@
             <h2>Retrieve the recent history of a specific event type</h2>
             <p class="issue" title="@tidoust">
               I'm a bit surprised by events here. I would have expected events to be "fire and forget". Here, a Web Thing would need to keep track of events that were fired. Said differently, there is not a lot of differences between events and properties for the time being.
+
+              VT: Define better when to use events vs properties. Also explain that the history of events is a sort of log and it makes mainly sense in the cloud Web Things.   
+
+
             </p>
             <p>
               In response to an HTTP <code>GET</code> request on an <a>Event URL</a>, an <a>Interoperable Web Thing</a> MUST return an array that lists recent <a title="Event">Events</a> that were fired by the underlying resource.
@@ -1283,6 +1293,8 @@
             </p>
             <p class="issue" title="@tidoust">
               I don't understand when creating an event could be useful. Could you clarify?
+
+              VT: again in the cloud. 
             </p>
             <pre class="example" title="Fire a batteryLow event">
               --&gt; REQUEST
