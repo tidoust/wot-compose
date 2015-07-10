@@ -408,14 +408,6 @@
             <td>An execution of an action</td>
           </tr>
           <tr>
-            <td><code>{wt}/events/</code>
-            <td>The list of events</td>
-          </tr>
-          <tr>
-            <td><code>{wt}/events/{id}</code>
-            <td>A specific event</td>
-          </tr>
-          <tr>
             <td><code>{wt}/*/subscriptions/</code>
             <td>Subscriptions to a resource</td>
           </tr>
@@ -529,11 +521,6 @@
               <td><a href="#properties"></a></td>
             </tr>
             <tr>
-              <td><code>events</code></td>
-              <td>The events that this resource can generate.</td>
-              <td><a href="#events"></a></td>
-            </tr>
-            <tr>
               <td><code>actions</code></td>
               <td>The actions that this resource can perform.</td>
               <td><a href="#actions"></a></td>
@@ -625,10 +612,6 @@
               "properties": {
                 "link": "properties/",
                 "title": "Properties of this Web Thing."
-              },
-              "events": {
-                "link": "events/",
-                "title": "Events of this Web Thing."
               },
               "actions": {
                 "link": "actions/",
@@ -832,33 +815,6 @@
               </tr>
               <tr>
                 <td><code>{wt}/actions/{id}/model</code></td>
-                <td>-</td>
-                <td>Yes</td>
-                <td>Yes</td>
-                <td>-</td>
-                <td>Yes</td>
-                <td>Gateways, Clouds</td>
-              </tr>
-              <tr>
-                <td><code>{wt}/events</code></td>
-                <td>-</td>
-                <td>Yes</td>
-                <td>-</td>
-                <td>-</td>
-                <td>Yes</td>
-                <td>Gateways, Clouds</td>
-              </tr>
-              <tr>
-                <td><code>{wt}/events/{id}</code></td>
-                <td>Yes</td>
-                <td>Yes</td>
-                <td>-</td>
-                <td>-</td>
-                <td>Yes</td>
-                <td>Gateways, Clouds</td>
-              </tr>
-              <tr>
-                <td><code>{wt}/events/{id}/{model}</code></td>
                 <td>-</td>
                 <td>Yes</td>
                 <td>Yes</td>
@@ -1116,177 +1072,6 @@
         </section>
 
         <section>
-          <h2>Events</h2>
-          <p>
-            On top of <a href="#common-json-fields"></a>, the JSON representation used to describe an <a>Event</a> includes the following fields:
-          </p>
-          <table>
-            <thead>
-              <tr>
-                <th>Field name</th>
-                <th>Type</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>values</code></td>
-                <td>Object</td>
-                <td>A description of the set of values that an instance of this <a>Event</a> will contain.
-                <br/>See <a href="#values"></a>.</td>
-              </tr>
-            </tbody>
-          </table>
-          <p>
-            The <dfn>Event URL</dfn> is the result of resolving the <code>id</code> returned in an <a>Event</a> description against the destination URL of the <code>events</code> link that gave birth to it.
-          </p>
-
-          <section>
-            <h2>Retrieve a list of events</h2>
-            <p>
-              In response to an HTTP <code>GET</code> request on the destination URL of an <code>events</code> link exposed by a resource, an <a>Interoperable Web Thing</a> MUST return an array of <a>Event</a> descriptions that the initial resource may fire.
-            </p>
-            <pre class="example" title="List of events">
-              HTTP Link headers returned in the response:
-              Link: &lt;subscriptions/&gt;; rel="subscriptions"
-              Link: &lt;http://webofthings.org/events/&gt;; rel="meta"
-
-              JSON response:
-              [
-                {
-                  "id":"deviceError",
-                  "name":"Device Error"
-                }, 
-                {
-                  "id":"batteryLow",
-                  "name":"Low Battery"
-                },
-                {
-                  "id":"myCustomEventType",
-                  "name":"My Event"
-                }
-              ]
-            </pre>
-          </section>
-
-          <section>
-            <h2>Retrieve the recent history of a specific event type</h2>
-            <p class="issue" title="@tidoust">
-              I'm a bit surprised by events here. I would have expected events to be "fire and forget". Here, a Web Thing would need to keep track of events that were fired. Said differently, there is not a lot of differences between events and properties for the time being.
-
-              VT: Define better when to use events vs properties. Also explain that the history of events is a sort of log and it makes mainly sense in the cloud Web Things.   
-
-
-            </p>
-            <p>
-              In response to an HTTP <code>GET</code> request on an <a>Event URL</a>, an <a>Interoperable Web Thing</a> MUST return an array that lists recent <a title="Event">Events</a> that were fired by the underlying resource.
-            </p>
-            <pre class="example" title="Retrieve the last measures of an accelerometer property">
-              HTTP Link headers:
-              Link: &lt;http://webofthings.org/events/batteryLow&gt;; rel="meta" 
-              Link: &lt;model/&gt;; rel="model"
-
-              JSON response:
-              [
-                {
-                  "id":"56",
-                  "type":"batteryLow",
-                  "name":"Low Battery",
-                  "timestamp":"2015-06-14T18:33:25.938Z",
-                  "value":{
-                    "state":"CRITICAL"
-                  },
-                  "tags":["alert"]
-                },
-                {
-                  "id":"55",
-                  "type":"batteryLow",
-                  "name":"Low Battery",
-                  "timestamp":"2015-06-12T12:30:22.172Z",
-                  "value":{
-                    "state":"REPLACE"
-                  },
-                  "tags":["warning"]
-                }
-              ]
-            </pre>
-          </section>
-
-          <section>
-            <h2>Retrieve the description of a specific event</h2>
-            <p>
-              In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code> link exposed by an <a>Event</a>, an <a>Interoperable Web Thing</a> MUST return the description of the <a>Event</a>. The JSON representation should be the same as the one returned for that <a>Event</a> in <a href="#retrieve-a-list-of-events"></a>.
-            </p>
-            <pre class="example" title="Event description example">
-              HTTP Link headers:
-              Link: &lt;http://webofthings.org/events/batteryLow&gt;; rel="meta" 
-
-              JSON response:
-              {
-                "id":"batteryLow",
-                "name":"Low Battery",  
-                "description":"Triggered once when battery drops below 2.8v.",
-                "values":{
-                  "state":{
-                    "type":"String",
-                    "enum":{
-                      "REPLACE":"It's time to replace the battery.",
-                      "CRITICAL":"This device will die anytime soon"
-                    } 
-                  }
-                },
-                "customFields":{
-                  "status":"active"
-                } 
-              }
-            </pre>
-            <p>
-              If allowed by the device, a <a>Client</a> can update the model of an <a>Event</a> by sending an HTTP <code>PUT</code> request to the same URL, with the new document as request body.
-            </p>
-          </section>
-
-          <section>
-            <h2>Create a new Event</h2>
-            <p>
-              In response to an HTTP <code>POST</code> request on an <a>Event URL</a> with an event value as request body, an <a>Interoperable Web Thing</a> MUST either reject the request with the appropriate status code or fire the provided value as event on the device.
-            </p>
-            <p>
-              This mechanism is mainly intended for cloud-based Web Things, where things relay their events.
-            </p>
-            <p class="issue" title="@tidoust">
-              I don't understand when creating an event could be useful. Could you clarify?
-
-              VT: again in the cloud. 
-            </p>
-            <pre class="example" title="Fire a batteryLow event">
-              --&gt; REQUEST
-              POST {wt}/events/batteryLow/
-              {
-                "timestamp":"2015-06-14T18:33:25.938Z",
-                "value":{
-                  "state":"CRITICAL"
-                },
-                "tags":["alert"]
-              }
-
-              &lt;-- RESPONSE
-              201 Created
-              Location: {wt}/events/temperature/56
-              {
-                "id":"56",
-                "type":"batteryLow",
-                "name":"Low Battery",
-                "timestamp":"2015-06-14T18:33:25.938Z",
-                "value":{
-                  "state":"CRITICAL"
-                },
-                "tags":["alert"]
-              }
-            </pre>
-          </section>
-        </section>
-
-        <section>
           <h2>Actions</h2>
           <p>
             On top of <a href="#common-json-fields"></a>, the JSON representation used to describe an <a>Action</a> includes the following fields:
@@ -1319,6 +1104,10 @@
               In response to an HTTP <code>GET</code> request on the destination URL of an <code>actions</code> link exposed by a resource, an <a>Interoperable Web Thing</a> MUST return an array of <a>Action</a> descriptions that the initial resource may achieve.
             </p>
             <pre class="example" title="List of actions">
+              --&gt; REQUEST
+              GET {wt}/actions
+
+
               HTTP Link headers returned in the response:
               Link: <http://webofthings.org/actions/upgradefirmware>; rel="meta"
 
@@ -1361,6 +1150,9 @@
               </tbody>
             </table>
             <pre class="example" title="Retrieve the recent executions of a specific action">
+              --&gt; REQUEST
+              GET {wt}/actions/upgradefirmware
+
               HTTP Link headers:
               Link: &lt;http://webofthings.org/actions/upgradefirmware&gt;; rel="meta"
               Link: &lt;model/&gt;; rel="model"
@@ -1395,27 +1187,10 @@
               In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code> link exposed by an <a>Action</a>, an <a>Interoperable Web Thing</a> MUST return the description of the <a>Action</a>. The JSON representation should be the same as the one returned for that <a>Action</a> in <a href="#retrieve-a-list-of-actions"></a>.
             </p>
             <pre class="example" title="Event description example">
-              HTTP Link headers:
-              Link: &lt;http://webofthings.org/events/batteryLow&gt;; rel="meta" 
+	            --&gt; REQUEST
+	            GET {wt}/actions/upgradefirmware
 
-              JSON response:
-              {
-                "id":"batteryLow",
-                "name":"Low Battery",  
-                "description":"Triggered once when battery drops below 2.8v.",
-                "values":{
-                  "state":{
-                    "type":"String",
-                    "enum":{
-                      "REPLACE":"It's time to replace the battery.",
-                      "CRITICAL":"This device will die anytime soon"
-                    } 
-                  }
-                },
-                "customFields":{
-                  "status":"active"
-                } 
-              }
+	            PUT CORRENT FIELD HERE
             </pre>
             <p>
               If allowed by the device, a <a>Client</a> can update the model of an <a>Event</a> by sending an HTTP <code>PUT</code> request to the same URL, with the new document as request body.
