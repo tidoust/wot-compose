@@ -12,7 +12,7 @@
   ],
   "properties": {
     "id": {
-      "type": "string", "pattern": "^[A-z]+$"
+      "type": "string", "pattern": "^\w$"
     },
     "name": {
       "type": "string"
