@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "title": "Web of Thing Label Schema",
+  "title": "Web Thing Label Schema",
   "type": "object",
   "required": [
     "id",
