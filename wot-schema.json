@@ -12,7 +12,8 @@
   ],
   "properties": {
     "id": {
-      "type": "string", "pattern": "^[A-Za-z0-9_]$"
+    	"description": "https://tools.ietf.org/html/rfc3986#page-50",
+      "type": "string", "pattern": "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(%5C?([^#]*))?(#(.*))?"
     },
     "name": {
       "type": "string"
