@@ -698,6 +698,7 @@
         </p>
     </section>
 
+
     <section>
         <h2>Links</h2>
 
@@ -1090,10 +1091,10 @@
             </table>
         </section>
         <section>
-            <h2>Thing</h2>
+            <h2>Web Thing</h2>
 
             <p>
-                A <a>Thing</a> is the virtual representation of a physical object. It is the root object of the Web
+                A <a>Web Thing</a> (<a>Thing</a> hereafter) is the virtual representation of a physical object. It is the root resource of the Web
                 Things model.
             </p>
 
@@ -1106,26 +1107,28 @@
                 <h2>Retrieve a Thing</h2>
 
                 <p>
-                    In response to an HTTP <code>GET</code> request on the root URL of a <code>Thing</code>, an <a>Extended
-                    Web Thing</a> MUST return an object that its representation.
+                    In response to an HTTP <code>GET</code> request on the root URL of a <code>Thing</code>, an <a>Extended Web Thing</a> MUST return an object that its representation.
                 </p>
-            <pre class="example" title="List of properties">
-              HTTP Link headers returned in the response:
-              Link: &lt;model/&gt;; rel="model"
+            <pre class="example" title="Get the Root Resource of a Web Thing">
+            --&gt; REQUEST
+            GET {wt}
+ 
+            &lt;-- RESPONSE
+            200 OK
+            Link: &lt;model/&gt;; rel="model"
 
-                {
-                  "id": "myCar",
-                  "name": "My super great car",
-                  "description": "This is such a great car. Seriously!",
-                  "createdAd": "2012-08-24T17:29:11.683Z",
-                  "updatedAd": "2012-08-24T17:29:11.683Z",
-                  "tags":["cart", "device", "test"],
-                  "customFields":
-                  {
+            {
+              "id": "myCar",
+              "name": "My super great car",
+              "description": "This is such a great car.",
+              "createdAd": "2012-08-24T17:29:11.683Z",
+              "updatedAd": "2012-08-24T17:29:11.683Z",
+              "tags":["cart", "device", "test"],
+              "customFields":{
                   "size": "20",
                   "color":"blue"
-                  }
-                }
+              }
+            }
             </pre>
             </section>
             <section>
@@ -1147,7 +1150,6 @@
 
               &lt;-- RESPONSE
               200 OK
-              Location: {wt}
               {
                   "id": "myCar",
                   "name": "My really super great car",
@@ -1155,10 +1157,9 @@
                   "createdAd": "2012-08-24T17:29:11.683Z",
                   "updatedAd": "2012-08-24T17:29:11.683Z",
                   "tags":["cart", "device", "test"],
-                  "customFields":
-                  {
-                  "size": "20",
-                  "color":"blue"
+                  "customFields":{
+                    "size": "20",
+                    "color":"blue"
                   }
                 }
             </pre>
@@ -1187,7 +1188,11 @@
                         link, an <a>Extended Web Thing</a> MUST return an object containing the model of the Thing.
                     </p>
             <pre class="example" title="Model of a Thing">
-                HTTP Link headers returned in the response:
+                --&gt; REQUEST
+                GET {wt}/model
+
+                &lt;-- RESPONSE
+                200 OK
                 Link: &lt;configurations/&gt;; rel="configurations"
                 Link: &lt;properties/&gt;; rel="properties"
                 Link: &lt;actions/&gt;; rel="actions"
@@ -1197,7 +1202,6 @@
                 Link: &lt;ui/&gt;; rel="ui"
                 Link: &lt;_myCustomLinkRelType/&gt;; rel="_myCustomLinkRelType"
 
-                JSON response:
                 {
                   "links": {
                     "configurations": {
@@ -1323,10 +1327,14 @@
                         contains.
                     </p>
             <pre class="example" title="List of properties">
-              HTTP Link headers returned in the response:
+              --&gt; REQUEST
+              GET {wt}/properties
+
+
+              &lt;-- RESPONSE
+              200 OK
               Link: &lt;http://webofthings.io/properties&gt;; rel="meta"
 
-              JSON response:
               [
                 {
                   "id":"temperature",
@@ -1376,22 +1384,21 @@
                     </p>
 
                     <p class="note">
-                        Some Web Things might not store the history of sensor readings but only the most recent value of
-                        a
-                        given property, in which case the array will always contain one object. However, Web Things on
-                        clouds and gateway are likely to store many past values of the property, in which case they can
-                        be
-                        retrieved using pagination and filters.
+                        Some Web Things might not store the history of sensor readings but only the most recent value of a given property, in which case the array will always contain one object. However, Web Things on clouds and gateway are likely to store many past values of the property, in which case they can
+                        be retrieved using pagination and filters.
                     </p>
 
                     <p class="issue" title="@vladounet">
                         Describe how pagination and last/filtered contents would work.
                     </p>
             <pre class="example" title="Retrieve the last measures of an accelerometer property">
-              HTTP Link headers:
+              --&gt; REQUEST
+              GET {wt}/properties/acceleration
+
+              &lt;-- RESPONSE
+              200 OK
               Link &lt;model/&gt;; rel="model"
 
-              JSON response:
               [
                 {
                   "x":11,
@@ -1438,11 +1445,14 @@
                         </tr>
                         </tbody>
                     </table>
-            <pre class="example" title="Property description example">
-              HTTP Link headers:
+            <pre class="example" title="Property Model Example">
+              --&gt; REQUEST
+              GET {wt}/properties/acceleration/
+
+              &lt;-- RESPONSE
+              200 OK
               Link: &lt;http://webofthings.org/properties/acceleration&gt;; rel="meta"
 
-              JSON response:
               {
                 "id":"acceleration",
                 "name": "Acceleration",
@@ -1467,16 +1477,8 @@
                 "tags":["sensor","public"]
               }
             </pre>
-                    <p>
-                        If allowed by the device, a <a>Client</a> can update the model of a <a>Property</a> by sending
-                        an
-                        HTTP <code>PUT</code> request to the same URL, with the new document as request body.
-                    </p>
-
                     <p class="note">
-                        Usually, the model will be hardcoded in the device and generally cannot be altered by clients.
-                        If
-                        Web Things is hosted on a cloud service, the model can be updated with a PUT.
+                        Usually, the model will be hardcoded in the device and generally cannot be altered by clients. If Web Things is hosted on a cloud service, the model model of a <a>Property</a> can be updated by sending an HTTP <code>PUT</code> request to the same URL, with the new model document in the request body.
                     </p>
 
                 </section>
@@ -1489,11 +1491,12 @@
                         values as
                         request body, an <a>Extended Web Thing</a> MUST either reject the request with the appropriate
                         status code (e.g. because the <a>Client</a> is unauthenticated or because the <a>Property</a> is
-                        read-only) or store the provided value(s) as new concrete values for the <a>Property</a>.
+                        read-only) or store the provided value(s) as new values for the <a>Property</a>. The body of the request SHOULD always be an array of values (at least one), which allows to send several property value updates within a single request. 
                     </p>
-            <pre class="example" title="Update the temperature property">
+            <pre class="example" title="Update the Values of the Temperature Property">
               --&gt; REQUEST
               POST {wt}/properties/temperature/
+
               [
                 {
                   "temp":24
@@ -1504,6 +1507,7 @@
               &lt;-- RESPONSE
               201 Created
               Location: {wt}/properties/temperature/
+
               [
                 {
                   "temp":24,
@@ -1511,28 +1515,31 @@
                 }
               ]
             </pre>
-                    <p class="issue" title="@tidoust">
-                        The <code>Location</code> URL returned in the 201 response seems wrong: that URL already existed
-                        before the request so has not been created. That should rather be <code>{wt}/properties/temperature/{someid}</code>
-                        if we want to expose the URL or we should use a <code>PUT</code> request.
-                        <br/>Actually, the question is: why allow passing an array instead of just a single value?
+
+                    <p class="note">
+                        A <a>Property URL</a> is always a collection of resources, therefore its representation is an array of individual values with different timestamps. The individual values are not adressable individually, therefore the <code>Location:</code> header in response to a successful property update request SHOULD always be the <a>Property URL</a> itself. 
                     </p>
+
                 </section>
 
                 <section>
                     <h2>Update multiple properties at once</h2>
 
                     <p>
-                        In response to an HTTP <code>POST</code> request on the destination URL of a
-                        <code>properties</code>
+                        In response to an HTTP <code>POST</code> request on the destination URL of a <code>properties</code>
                         link, an <a>Extended Web Thing</a> MUST either reject the request with the appropriate status
                         code
-                        or store the provided values as new concrete values for each of the provided <a
+                        or store the provided values as new values for each of the provided <a
                             title="Property">Properties</a>.
                     </p>
             <pre class="example" title="Update multiple properties at once">
               --&gt; REQUEST
               POST {wt}/properties/
+
+              &lt;-- RESPONSE
+              201 Created
+              Location: {wt}/properties/
+
               [
                 {
                   "id":"temperature",
@@ -1601,10 +1608,10 @@
               GET {wt}/actions
 
 
-              HTTP Link headers returned in the response:
+              &lt;-- RESPONSE
+              200 OK
               Link: <http://webofthings.org/actions/upgradefirmware>; rel="meta"
 
-              JSON response:
               [
                 {
                   "id":"upgradeFirmware",
@@ -1652,11 +1659,11 @@
               --&gt; REQUEST
               GET {wt}/actions/upgradefirmware
 
-              HTTP Link headers:
+              &lt;-- RESPONSE
+              200 OK
               Link: &lt;http://webofthings.org/actions/upgradefirmware&gt;; rel="meta"
               Link: &lt;model/&gt;; rel="model"
 
-              JSON response:
               [
                 {
                   "id":"223",
@@ -1692,29 +1699,44 @@
                     </p>
             <pre class="example" title="Action description example">
 	            --&gt; REQUEST
-	            GET {wt}/actions/upgradefirmware
-                [
-                  {
-                      "id":223,
-                      "value":{
-                          "delay":30,
-                          "mode":"SOFT"
-                      },
-                      "timestamp":"2015-06-14T18:33:25.938Z"
-                  },
-                  {
-                      "id":222,
-                      "value":{
-                          "delay":60,
-                          "mode":"FORCE"
-                      },
-                      "timestamp":"2015-06-14T14:22:23.233Z"
-                  }
-                ]
+	            GET {wt}/actions/upgradefirmware/model
+
+&lt;-- RESPONSE
+200 OK
+
+{
+    "id":"upgradeFirmware",
+    "name":"Upgrade Device Firmware",  
+    "description":"Loads a new firmware from the cloud and installs it.",
+    "values": {
+        "delay":{
+            "name":"Upgrade Delay",
+            "type":"integer",
+            "required":true,
+            "minValue":0,
+            "maxValue":120,
+            "unit":"seconds"
+        },
+        "url":{
+            "name":"Firmware URL",
+            "description":"The URL to get the firmware from (should contain the credentials).",
+            "required":true,
+            "type":"string"
+        },
+        "requester":{
+            "name":"Request User ID",
+            "description":"Your user ID (optional) ",
+            "type":"string"
+        }
+    },
+    "customFields":{
+        "permission":"admin",
+        "priority":"high"
+    }   
+}
             </pre>
                     <p>
-                        If allowed by the device, a <a>Client</a> can update the model of an <a>Action</a> by sending an
-                        HTTP <code>PUT</code> request to the same URL, with the new document as request body.
+                        If allowed by the device, a <a>Client</a> can update the model of an <a>Action</a> by sending an HTTP <code>PUT</code> request to the same URL, with the new document as request body.
                     </p>
                 </section>
 
@@ -1737,6 +1759,7 @@
             <pre class="example" title="Schedule a reboot">
               --&gt; REQUEST
               POST {wt}/actions/reboot
+
               {
                 "delay":50,
                 "mode":"debug"
@@ -1745,6 +1768,7 @@
               &lt;-- RESPONSE
               201 Created
               Location: {wt}/actions/reboot/233
+
               {
                 "id":"233",
                 "value":{
@@ -1795,7 +1819,13 @@
                         Implementers should rely on custom vocabularies, using the <code>customFields</code> JSON field.
                     </p>
             <pre class="example" title="System configuration">
-              {
+                --&gt; REQUEST
+                GET {wt}/system
+                            
+                &lt;-- RESPONSE
+                200 OK
+
+                {
                 "id": "system",
                 "customFields":{
                   firmwareVersion": "4.0",
@@ -1817,10 +1847,6 @@
             </pre>
                 </section>
             </section>
-
-            <p class="issue" title="@domguinard">
-                We should add a way to add Things to a proxy: for @vladounet
-            </p>
 
             <section>
                 <h2>Things</h2>
@@ -1857,31 +1883,66 @@
                         In response to an HTTP <code>GET</code> request on the destination URL of a <code>things</code>
                         link, an <a>Extended Web Thing</a> MUST return an array of things descriptions.
                     </p>
-            <pre class="example" title="List of things proxied by a device">
-            [
-              {
-                "id":"982tjqogeih",
-                "name":"Shopping Cart"
-              },  
-              {
-                "id":"2398h87wt489foz",
-                "name":"Shopping Cart",
-                "rootUrl":"/pi",
-                "description":"Shopping Cart that updates its location as it moves"
-              },  
-              {
-                "id":"p9qrnc89w48oh",
-                "name":"Shopping Cart",
-                "rootUrl":"https://192.168.0.6/",
-                "description":"LAN-connected gateway to Lamp #4."
-              }
-            ]
-            </pre>
-                    <p class="issue" title="@tidoust">
-                        So, if an <code>id</code> is to be interpreted as a URL, <code>rootUrl</code> is not needed
-                        here,
-                        and the ID should rather be the actual URL of these things. Can I drop <code>rootUrl</code>?
+                    <pre class="example" title="List of things proxied by a device">
+                    --&gt; REQUEST
+                    GET {wt}/things
+                                
+                    &lt;-- RESPONSE
+                    200 OK
+
+                    [
+                      {
+                        "id":"982tjqogeih",
+                        "name":"Shopping Cart"
+                      },  
+                      {
+                        "id":"2398h87wt489foz",
+                        "name":"Shopping Cart",
+                        "rootUrl":"/pi",
+                        "description":"Shopping Cart that updates its location as it moves"
+                      },  
+                      {
+                        "id":"p9qrnc89w48oh",
+                        "name":"Shopping Cart",
+                        "rootUrl":"https://192.168.0.6/",
+                        "description":"LAN-connected gateway to Lamp #4."
+                      }
+                    ]
+                    </pre>
+                    <p class="note">
+                        The <code>id</code> can be interpreted as a URL, but if a Web Thing can be directly accessed without the proxy, the <code>rootUrl</code> can be used to provide a different Root URL.
                     </p>
+
+                </section>
+
+                <section>
+                    <h2>Add a Thing to a Proxy</h2>
+
+                    <p>
+                        Clients can add new Things to be proxied by a Web Thing (especially for gateways/cloud) using an HTTP <code>POST</code> request on the <a>Things URL</a> of a <code>Web Thing</code> and by sending in the request body the root resource representation of the Thing to be proxied.
+                    </p>
+                    <pre class="example" title="List of things proxied by a device">
+                    --&gt; REQUEST
+                    POST {wt}/things
+
+                    {
+                      "id":"p9qrnc89w48oh",
+                      "name":"Shopping Cart",
+                      "rootUrl":"https://192.168.0.6/",
+                      "description":"LAN-connected gateway to Lamp #4."
+                    }
+                                
+                    &lt;-- RESPONSE
+                    201 CREATED
+                    Location: {wt}/things/p9qrnc89w48oh
+
+                    {
+                      "id":"p9qrnc89w48oh",
+                      "name":"Shopping Cart",
+                      "rootUrl":"https://192.168.0.6/",
+                      "description":"LAN-connected gateway to Lamp #4."
+                    }
+                    </pre>
                 </section>
             </section>
 
@@ -2044,7 +2105,7 @@
     </section>
 
     <section class="appendix">
-        <h2>Examples</h2>
+        <h1>Examples</h1>
 
         <section>
             <h2>Extended Web Thing</h2>
@@ -2110,7 +2171,7 @@
     </section>
 
     <section>
-        <h2>Acknowledgments</h2>
+        <h1>Acknowledgments</h1>
 
         <p>
             This work is supported by the European Union's 7th Research Framework Programme (FP7/2013-2015) under grant
