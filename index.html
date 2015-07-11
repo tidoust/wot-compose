@@ -1102,9 +1102,8 @@
                 the result of resolving the <code>id</code> returned in the representation of the <a>Things</a>
                 resource.
             </p>
-
             <section>
-                <h2>Retrieve a <a>Thing</a></h2>
+                <h2>Retrieve a Thing</h2>
 
                 <p>
                     In response to an HTTP <code>GET</code> request on the root URL of a <code>Thing</code>, an <a>Extended
@@ -1820,6 +1819,10 @@
                 </section>
             </section>
 
+            <p class="issue" title="@domguinard">
+                We should add a way to add Things to a proxy: for @vladounet
+            </p>
+
             <section>
                 <h2>Things</h2>
 
@@ -1885,20 +1888,66 @@
 
             <section>
                 <h2>Subscriptions</h2>
+                <p>All resources can be subscribed to but in particular, an <a>Extended Web Thing</a> SHOULD enable subscriptions to <a title="Action">Actions</a> and <a title="Property">Properties</a>. Subscriptions allows for a <a>Client</a> to be notified via a push event whenever the state of an observed resources changes.
 
-                <p>
-                    A <dfn>Subscription resource</dfn> allows to manage publication/subscription type of subscription to
-                    a
-                    given resource. Such a resource may be appended to any other resource exposed by an <a>Extended Web
-                    Thing</a>. In particular, an <a>Extended Web Thing</a> SHOULD enable subscriptions to <a
-                        title="Action">Actions</a>
-                    and <a title="Property">Properties</a>.
+                    <section>
+                    <h2>Create a subscription</h2>
+
+               An <a>Extended Web Thing</a> SHOULD support subscriptions via the WebSocket [[!RFC6455]] protocol and MAY support subscriptions via WebHooks (HTTP callbacks). Subscriptions are enabled via the HTTP protocol upgrade mechanism [[!RFC2616]] as shown below
                 </p>
+                <figure>
+                    <img src="subscriptions.png"
+                         alt="Clients can subscribe to resources via a protocol upgrade."
+                         width="600"/>
+                    <figcaption>Client subscription to a resource via a protocol upgrade, once via Websocket, once via a Webhook (HTTP callback).</figcaption>
+                </figure>
+
+                To subscribe to a resource the following HTTP headers should be provided via a GET request (e.g., on <code>/properties/temp</code>).
+                </p>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Header name</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><code>Upgrade</code></td>
+                        <td>The protocol that should be used for the subscription, one of
+                            <code>webhook</code> or <code>websocket</code>
+                            <br/><strong>This header is required.</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>Callback</code></td>
+                        <td>The callback URL to which updates should be pushed.
+                            <code>webhook</code> or <code>websocket</code>
+                            <br/><strong>This header is required in the case of a <code>webhook</code> subscription.</strong></td>
+                    </tr>
+                </table>
+               <p> In response to a HTTP <code>GET</code> request on the destination URL of a resource, an <a>Extended Web Thing</a> MUST either reject the request with an appropriate status code or MUST return a <code>101 Switching Protocol</code> response for a subscription via Websocket or a <code>200 OK</code> for a subscription via Webhook. In both cases the following headers must be returned (on top of the protocol specific headers):</p>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Header name</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><code>Subscription-ID</code></td>
+                        <td>The identifier of the subscription
+                        <br/><strong>This header is required.</strong></td>
+                    </tr>
+                </table>
+
+                <section>
+                    <h2>Subscription resource</h2>
+                <p>
+                    The <dfn>Subscription resource</dfn> allows to list current subscriptions to resources as well as cancelling a subscription. Such a resource is accessible via the root URL of the <a>Extended Web Thing</a></p>
 
                 <p>
-                    On top of <a href="#common-json-fields"></a>, the JSON representation used to describe a
-                    subscription
-                    includes the following fields:
+                    On top of <a href="#common-json-fields"></a>, the JSON representation used to describe a subscription includes the following fields:
                 </p>
                 <table>
                     <thead>
@@ -1941,20 +1990,15 @@
             [
               {
                 "id":"2349",
-                "type":"httpCallback",
+                "type":"webhook",
                 "resource":"/properties/temperature",
-                "customFields":{
-                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback" 
-                }
+                "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback"
               },
               {
                 "id":"2350",
                 "subscriberId":"ServiceObject-123213213",
-                "type":"websockets",
-                "resource":"/properties/location",      
-                "customFields":{
-                  "websocketUrl":"wss://www.compose-project.eu/WebObject-2423529879879875/streams/location"
-                }
+                "type":"websocket",
+                "resource":"/properties/location"
               }
             ]
             </pre>
@@ -1978,62 +2022,26 @@
             <pre class="example" title="Retrieve information about a specific subscription">
               {
                 "id":"2349",
-                "subscriberId":"ServiceObject-123213213",
-                "type":"httpCallback",
+                "type":"webhook",
                 "resource":"/properties/temperature",
-                "customFields":{
-                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback" 
-                }
+                "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback"
               }
             </pre>
                 </section>
 
                 <section>
-                    <h2>Create a subscription</h2>
+                    <h2>Delete a subscription</h2>
 
                     <p>
-                        In response to an HTTP <code>POST</code> request on the destination URL of a
-                        <code>subscriptions</code> link with a valid subscription description at request body, an <a>Extended
-                        Web Thing</a> MUST either reject the request with an appropriate status code or create the
-                        subscription and return available information about that subscription in a <code>201
-                        Created</code>
-                        HTTP response. The <code>Location</code> HTTP header identified the URL of the created
-                        subscription.
+                        In response to an HTTP <code>DELETE</code> request on the destination URL of a
+                        <code>subscriptions</code> an <a>Extended
+                        Web Thing</a> MUST either reject the request with an appropriate status code or remove (unsubscribe) the
+                        subscription and return a <code>200 OK</code> status code.
                     </p>
-
-                    <p class="issue" title="@tidoust">
-                        The mechanism by which a Web Thing is to "create the subscription" should be defined for HTTP
-                        and
-                        Websockets
-                    </p>
-            <pre class="example" title="Subscribe to a resource">
-              --&gt; REQUEST
-              POST {wt}/events/batteryLow/subscriptions
-              {
-                "subscriberId":"ServiceObject-123213213",
-                "type":"httpCallback",
-                "customFields":{
-                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback"
-                }
-              }
-
-              &lt;-- RESPONSE
-              201 CREATED
-              Location: {wt}/events/batteryLow/subscriptions/493
-              {
-                "id":"493",
-                "subscriberId":"ServiceObject-123213213",
-                "type":"httpCallback",
-                "createdAt":"2015-06-23T16:03:00.000Z",
-                "resource":"/events/batteryLow",
-                "customFields":{
-                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback"
-                }
-              }
-            </pre>
                 </section>
             </section>
         </section>
+    </section>
     </section>
 
     <section class="appendix">
