@@ -986,6 +986,7 @@
                     <th>PUT</th>
                     <th>DELETE</th>
                     <th>OPTIONS</th>
+                    <th>Details</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -996,6 +997,7 @@
                     <td>D,G,C</td>
                     <td>G,C</td>
                     <td>D,G,C</td>
+                    <td><a>Thing Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/subscriptions</code></td>
@@ -1004,6 +1006,7 @@
                     <td>-</td>
                     <td>D,G,C</td>
                     <td>D,G,C</td>
+                    <td><a>Subscriptions Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/model</code></td>
@@ -1012,6 +1015,16 @@
                     <td>G,C</td>
                     <td>-</td>
                     <td>D,G,C</td>
+                    <td><a>Model Resource</a></td>
+                </tr>
+                <tr>
+                    <td><code>{wt}/system</code></td>
+                    <td>-</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
+                    <td>-</td>
+                    <td>D,G,C</td>
+                    <td><a>System Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/properties</code></td>
@@ -1020,6 +1033,7 @@
                     <td>-</td>
                     <td>-</td>
                     <td>D,G,C</td>
+                    <td><a>Properties Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/properties/{id}</code></td>
@@ -1028,6 +1042,7 @@
                     <td>-</td>
                     <td>-</td>
                     <td>D,G,C</td>
+                    <td><a>Properties Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/actions</code></td>
@@ -1036,6 +1051,7 @@
                     <td>-</td>
                     <td>-</td>
                     <td>D,G,C</td>
+                    <td><a>Actions Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/actions/{id}</code></td>
@@ -1044,6 +1060,7 @@
                     <td>-</td>
                     <td>-</td>
                     <td>D,G,C</td>
+                    <td><a>Actions Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/actions/{id}/{actionId}</code></td>
@@ -1052,6 +1069,7 @@
                     <td>-</td>
                     <td>D,G,C</td>
                     <td>D,G,C</td>
+                    <td><a>Actions Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/things</code></td>
@@ -1060,6 +1078,7 @@
                     <td>-</td>
                     <td>-</td>
                     <td>G,C</td>
+                    <td><a>Things Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/things/{id}</code></td>
@@ -1068,15 +1087,16 @@
                     <td>G,C</td>
                     <td>G,C</td>
                     <td>G,C</td>
+                    <td><a>Things Resource</a></td>
                 </tr>
                 </tbody>
             </table>
         </section>
         <section>
-            <h2>Web Thing</h2>
+            <h2>Web <dfn>Thing Resource</dfn></h2>
 
             <p>
-                A <a>Web Thing</a> (<a>Thing</a> hereafter) is the virtual representation of a physical object. It is the root resource of the Web
+                A <a>Web Thing</a> (<dfn>Thing</dfn> hereafter) is the virtual representation of a physical object. It is the root resource of the Web
                 Things model.
             </p>
 
@@ -1147,10 +1167,10 @@
             </pre>
             </section>
             <section>
-                <h2>Model</h2>
+                <h2><dfn>Model Resource</dfn></h2>
 
                 <p>
-                    A <dfn>Model</dfn> describes the values of <code>properties</code> and <code>actions</code> that can
+                    A <a>Model</a> describes the values of <code>properties</code> and <code>actions</code> that can
                     be
                     performed on <a>Things</a>.
                 </p>
@@ -1283,7 +1303,7 @@
                 </section>
             </section>
             <section>
-                <h2>Properties</h2>
+                <h2><dfn>Properties Resource</dfn></h2>
 
                 <p>
                     A <a>Property</a> keeps track of a set of variables about a device (its location, the temperature
@@ -1545,7 +1565,7 @@
             </section>
 
             <section>
-                <h2>Actions</h2>
+                <h2><dfn>Actions Resource</dfn></h2>
 
                 <p>
                     On top of <a href="#common-json-fields"></a>, the JSON representation used to describe an
@@ -1778,10 +1798,10 @@
             </section>
 
             <section>
-                <h2>System</h2>
+                <h2><dfn>System Resource</dfn></h2>
 
                 <p>
-                    A <dfn>System resource</dfn> specifies all the configurations and system properties that an <a>Extended
+                    A System resource specifies all the configurations and system properties that an <a>Extended
                     Web Thing</a> exposes. For example, it can specify what interfaces it has, the version of its
                     firmware,
                     etc.
@@ -1831,10 +1851,10 @@
             </section>
 
             <section>
-                <h2>Things</h2>
+                <h2><dfn>Things Resource</dfn></h2>
 
                 <p>
-                    A <a>Web Thing</a> may proxy other <a title="Web Thing">Web Things</a>. For instance, it is expected
+                    A <a>Web Thing</a> may proxy other <a title="Web Thing">Web Things</a> via the Things resource. For instance, it is expected
                     that gateways and cloud services will proxy a number of third party devices. On top of <a
                         href="#common-json-fields"></a>, the JSON representation used to describe a link to another
                     thing
@@ -1929,7 +1949,7 @@
             </section>
 
             <section>
-                <h2>Subscriptions</h2>
+                <h2><dfn>Subscriptions Resource</dfn></h2>
                 <p>All resources can be subscribed to but in particular, an <a>Extended Web Thing</a> SHOULD enable subscriptions to <a title="Action">Actions</a> and <a title="Property">Properties</a>. Subscriptions allows for a <a>Client</a> to be notified via a push event whenever the state of an observed resources changes.
 
                     <section>
