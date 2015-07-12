@@ -235,7 +235,7 @@
     </p>
 
     <section>
-        <h2>Direct connectivity</h2>
+        <h2><dfn>Direct</dfn> connectivity</h2>
 
         <p>
             In the most straightforward case, a <a>Web Thing</a> is simply a Web API that <a title="Client">Clients</a>
@@ -252,7 +252,7 @@
     </section>
 
     <section>
-        <h2>Gateway-based connectivity</h2>
+        <h2><dfn>Gateway</dfn> proxied connectivity</h2>
 
         <p>
             Gateway based connectivity is used when a Thing cannot offer a Web API directly. In this case an
@@ -268,7 +268,7 @@
     </section>
 
     <section>
-        <h2>Cloud-based connectivity</h2>
+        <h2><dfn>Cloud</dfn> proxied connectivity</h2>
 
         <p>
             This third case is similar to <a href="#gateway-based-connectivity"></a>. However, in this case the gateway
@@ -964,16 +964,18 @@
             <h2>HTTP verbs support</h2>
 
             <p>
-                Ideally, an <a>Extended Web Thing</a> SHOULD support all end-points. The target column in the table
+                Ideally, an <a>Extended Web Thing</a> SHOULD support all end-points. The letters <code>D,G,C</code> refer to <a href="#web-things-integration-patterns"></a> and is here as an indication of which type of integration would typically implement these resources. A <code>D</code> means that the resource should be implemented on Web Things using the the <a>Direct</a> integration pattern, a <code>G</code> means the resource should be implemented when using the <a>Gateway</a> integration pattern, a <code>C</code> means the resource should be implemented when using the <a>Cloud</a> integration pattern.
+
+                The target column in the table
                 below refers to <a href="#web-things-integration-patterns"></a> and is here as an indication of which
                 type of Thing would typically implement these end points.
             </p>
 
             <p class="note">
-                The URLs used in this table are purely indicative as an <a>Extended Web Thing</a> may choose to use
-                other URLs for them. The actual URLs are to be reported in the representation of the root resource in
-                <code>Link</code> HTTP Headers or using the JSON <code>links</code> field as described in <a
-                    href="#links"></a>.
+                The URLs used in this table are indicative as an <a>Extended Web Thing</a> may choose to use
+                other URLs for them. The actual URLs are to be reported in the representation of the in
+                <code>Link</code> HTTP Headers and in the JSON <code>links</code> field as described in <a
+                    href="#links"></a> of the <a>Model</a> resource.
             </p>
             <table>
                 <thead>
@@ -984,99 +986,88 @@
                     <th>PUT</th>
                     <th>DELETE</th>
                     <th>OPTIONS</th>
-                    <th>Target</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td><code>{wt}</code></td>
-                    <td>-</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>-</td>
-                    <td>Yes</td>
-                    <td>Things, Gateways, Clouds</td>
+                    <td>G,C</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
+                    <td>G,C</td>
+                    <td>D,G,C</td>
                 </tr>
                 <tr>
                     <td><code>{wt}/subscriptions</code></td>
                     <td>-</td>
-                    <td>Yes</td>
+                    <td>D,G,C</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Things, Gateways, Clouds</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
                 </tr>
                 <tr>
                     <td><code>{wt}/model</code></td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
+                    <td>D,G,C</td>
+                    <td>G,C</td>
                     <td>-</td>
-                    <td>-</td>
-                    <td>Things, Gateways, Clouds</td>
+                    <td>D,G,C</td>
                 </tr>
                 <tr>
                     <td><code>{wt}/properties</code></td>
-                    <td>Yes</td>
-                    <td>Yes</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Things, Gateways, Clouds</td>
+                    <td>D,G,C</td>
                 </tr>
                 <tr>
                     <td><code>{wt}/properties/{id}</code></td>
-                    <td>Yes</td>
-                    <td>Yes</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Things, Gateways, Clouds</td>
+                    <td>D,G,C</td>
                 </tr>
                 <tr>
                     <td><code>{wt}/actions</code></td>
                     <td>-</td>
-                    <td>Yes</td>
+                    <td>D,G,C</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
+                    <td>D,G,C</td>
                 </tr>
                 <tr>
                     <td><code>{wt}/actions/{id}</code></td>
-                    <td>Yes</td>
-                    <td>Yes</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
+                    <td>D,G,C</td>
                 </tr>
                 <tr>
                     <td><code>{wt}/actions/{id}/{actionId}</code></td>
                     <td>-</td>
-                    <td>Yes</td>
+                    <td>D,G,C</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
                 </tr>
                 <tr>
                     <td><code>{wt}/things</code></td>
-                    <td>Yes</td>
-                    <td>Yes</td>
+                    <td>G,C</td>
+                    <td>G,C</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
+                    <td>G,C</td>
                 </tr>
                 <tr>
                     <td><code>{wt}/things/{id}</code></td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
+                    <td>-</td>
+                    <td>G,C</td>
+                    <td>G,C</td>
+                    <td>G,C</td>
+                    <td>G,C</td>
                 </tr>
                 </tbody>
             </table>
