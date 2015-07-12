@@ -1,0 +1,30 @@
+[
+  {
+    "id":"temperature",
+    "value":{
+      "temp":22,
+      "timestamp":"2015-06-14T14:30:00.000Z"
+    }  
+  },
+  {
+    "id":"status",
+    "value":{
+      "status":"OK",
+      "timestamp":"2015-06-14T14:30:00.000Z"
+    }  
+  },
+  {
+    "id":"humidity",
+    "value":{
+      "h":22,
+      "timestamp":"2015-06-14T14:30:00.000Z"
+    }
+  },
+  {
+    "id":"pir",
+    "value":{
+      "p":false,
+      "timestamp":"2015-06-14T14:30:00.000Z"
+    }  
+  }
+]

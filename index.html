@@ -486,7 +486,16 @@
         </section>
 
         <section>
-            <h2>R1.4 – A <a>Web Thing</a> SHOULD provide a default human-readable documentation</h2>
+            <h2>R1.4 – A <a>Web Thing</a> SHOULD return a 204 for all write operations</h2>
+
+            <p>
+                By default, all PUT, POST, and DELETE requests to a Web Thing should not return the payload of the object that was created/modified, therefore should return a <code>204 NO CONTENT</code> response and no response body. 
+            </p>
+
+        </section>
+
+        <section>
+            <h2>R1.5 – A <a>Web Thing</a> SHOULD provide a default human-readable documentation</h2>
 
             <p>
                 To interact with a <a>Web Thing</a>, a Client needs to know what resources are available on the Web
@@ -686,11 +695,8 @@
           "customFields":{
               "size":"20",
               "color":"blue"
-          },
-          "links":{
-              ... (see below)...
           }
-          ...
+        }
         </pre>
         <p>
             The JSON response MAY contain additional fields, depending on the type of resource being considered, check
@@ -710,11 +716,11 @@
         </p>
 
         <p>
-            In particular, each link is defined by a <strong>relation type</strong>, the actual URL of the sub-resource,
-            and a human-readable identifier for the relation. <a
+            In particular, each link is defined by a <strong>relation type</strong> (the "link type"), the actual URL of the sub-resource (the "link"),
+            and a human-readable identifier for the relation (the "title"). <a
                 href="https://tools.ietf.org/html/rfc5988#section-6.2.2">Relation types</a> defined in [[!RFC5988]] may
-            be used to characterize the relation with the sub-resource. Additionally, this specification defines the
-            following relation types:
+            be used to characterize the relation with the sub-resource. Additionally, the Web Things model defines the
+            following aditionnal relation types:
         </p>
         <table>
             <thead>
@@ -734,11 +740,6 @@
                 <td><code>actions</code></td>
                 <td>The actions that this resource can perform.</td>
                 <td><a href="#actions"></a></td>
-            </tr>
-            <tr>
-                <td><code>system</code></td>
-                <td>The system configurations and parameters of this resource.</td>
-                <td><a href="#system"></a></td>
             </tr>
             <tr>
                 <td><code>things</code></td>
@@ -772,12 +773,11 @@
         </p>
 
         <p>
-            In addition to exposing them in the HTTP Header of earch resource, links MUST be exposed from the
+            In addition to exposing them in the HTTP Header of earch resource, links SHOULD be exposed from the
             <a>Model</a> resource of a <a>Extended Web Thing</a> using the <code>links</code> field of the JSON payload.
-            The keys of this object
-            represent the relation type while each value describes the actual link as illustrated below.
+            The keys of this object represent the relation type while each value describes the actual link as illustrated below.
         </p>
-        <pre class="example" title="Links object model">
+        <pre class="example" title="Links Object JSON Model">
         {
           ...
           "links":{
@@ -816,7 +816,7 @@
             </tr>
             </tbody>
         </table>
-        <pre class="example" title="Links object">
+        <pre class="example" title="Links Object JSON Example">
           {
             "links": {
               "configurations": {
@@ -855,6 +855,21 @@
               "..." : {"..." : {"..."}}
           }
         </pre>
+
+        <p>
+            A <code>GET</code> on any resource of a Web Thing should return the list of all related resources as "Link" HTTP headers, which allows to use the same standard model regardless of the representation chosen. This is an example of the headers returned after a <code>GET {wt}/</code> on the root URL of a Web Thing:
+        </p>
+
+        <pre class="example" title="Links in the HTTP Header">
+            Link: &lt;properties/&gt;; rel="properties"
+            Link: &lt;actions/&gt;; rel="actions"
+            Link: &lt;product/&gt;; rel="product"
+            Link: &lt;meta/&gt;; rel="meta"
+            Link: &lt;help/&gt;; rel="help"
+            Link: &lt;ui/&gt;; rel="ui"
+        </pre>
+
+
     </section>
 
     <section>
@@ -1118,6 +1133,13 @@
             &lt;-- RESPONSE
             200 OK
             Link: &lt;model/&gt;; rel="model"
+            Link: &lt;properties/&gt;; rel="properties"
+            Link: &lt;actions/&gt;; rel="actions"
+            Link: &lt;product/&gt;; rel="product"
+            Link: &lt;meta/&gt;; rel="meta"
+            Link: &lt;help/&gt;; rel="help"
+            Link: &lt;ui/&gt;; rel="ui"
+            Link: &lt;_myCustomLinkRelType/&gt;; rel="_myCustomLinkRelType"
 
             {
               "id": "myCar",
@@ -1151,19 +1173,7 @@
                 }
 
               &lt;-- RESPONSE
-              200 OK
-              {
-                  "id": "myCar",
-                  "name": "My really super great car",
-                  "description": "This is such a great car. Seriously!",
-                  "createdAd": "2012-08-24T17:29:11.683Z",
-                  "updatedAd": "2012-08-24T17:29:11.683Z",
-                  "tags":["cart", "device", "test"],
-                  "customFields":{
-                    "size": "20",
-                    "color":"blue"
-                  }
-                }
+              204 NO CONTENT
             </pre>
             </section>
             <section>
@@ -1195,35 +1205,120 @@
 
                 &lt;-- RESPONSE
                 200 OK
-                Link: &lt;configurations/&gt;; rel="configurations"
-                Link: &lt;properties/&gt;; rel="properties"
-                Link: &lt;actions/&gt;; rel="actions"
-                Link: &lt;product/&gt;; rel="product"
-                Link: &lt;meta/&gt;; rel="meta"
-                Link: &lt;help/&gt;; rel="help"
-                Link: &lt;ui/&gt;; rel="ui"
-                Link: &lt;_myCustomLinkRelType/&gt;; rel="_myCustomLinkRelType"
 
                 {
-                  "links": {
-                    "configurations": {
-                      "link": "system/",
-                      "title": "System configurations of this Web Thing."
+                  "id":"pi",
+                  "name": "My WoT Raspberry PI",
+                  "description": "A simple WoT-connected Raspberry PI for the WoT book.",
+                  "tags": ["raspberry","pi","WoT"],
+                  "links":{
+                    "product": {
+                      "link" : "https://www.raspberrypi.org/products/raspberry-pi-2-model-b/",
+                      "title" : "Product this Web Thing is based on"
                     },
                     "properties": {
-                      "link": "properties/",
-                      "title": "Properties of this Web Thing."
+                      "link" : "http://w3c.org/schemas/properties/",
+                      "title" : "List of Properties",
+                      "resources":[
+                        {
+                          "id":"temperature",
+                          "name": "Temperature Sensor",
+                          "description": "An ambient temperature sensor.",
+                          "values":{
+                            "temp":{
+                              "name":"Temperature sensor",
+                              "description":"The temperature in celsius",
+                              "unit":"celsius",
+                              "value": 0,
+                              "customFields":{
+                                "gpio": 21
+                              }
+                            }
+                          },
+                          "tags":["sensor","public","temperature"]
+                        },
+                        {
+                          "id":"humidity",
+                          "name": "Humidity Sensor",
+                          "description": "An ambient humidity sensor.",
+                          "values":{
+                            "h":{
+                              "name":"Humidity",
+                              "description":"Percentage of Humidity",
+                              "unit": "%",
+                              "value": 0,
+                              "customFields":{
+                                "gpio": 21
+                              }
+                            }
+                          },
+                          "tags":["sensor","public"]
+                        },
+                        {
+                          "id":"pir",
+                          "name": "Passive Infrared",
+                          "description": "A passive infrared sensor.",
+                          "values":{
+                            "p":{
+                              "name":"Presence",
+                              "description":"Current sensor value (true=motion detected)",
+                              "type":"boolean",
+                              "value": false,
+                              "customFields":{
+                                "gpio": 20
+                              }
+                            }
+                          },
+                          "tags":["sensor","public"]
+                        },
+                        {
+                          "id":"leds",
+                          "name": "LEDs",
+                          "description": "The LEDs of this device.",
+                          "values":{
+                            "1": {
+                              "name": "LED 1",
+                              "value": false,
+                              "customFields":{
+                                "gpio": 17
+                              }
+                            },
+                            "2": {
+                              "name": "LED 2",
+                              "value": false,
+                              "customFields":{
+                                "gpio": 19
+                              }
+                            }
+                          },
+                          "tags":["sensor","public"]
+                        }
+                      ]
                     },
-                    "actions": {
-                      "link": "actions/",
-                      "title": "Actions of this Web Thing."
-                    },
-                    "product": {
-                      "link": "http://api.evrythng.com/products/xyz",
-                      "title": "Product this Web Thing is an instance of"
+                    "actions":{
+                      "link": "http://w3c.org/schemas/actions/",
+                      "title": "Actions of this Web Thing",
+                      "resources":[
+                        {
+                          "id":"displayText",
+                          "name":"Display text on the LCD screen",  
+                          "values":{
+                            "text":{
+                              "type":"String",
+                              "required":true
+                            },
+                            "delay":{
+                              "type":"Integer",
+                              "minValue":30,
+                              "maxValue":1800,
+                              "unit":"seconds"
+                            }
+                          }
+                        }
+                      ]
                     },
                     "meta": {
-                      "link": "http://webofthings.org/schemas/web-thing/",
+                      "link": "http://w3c.org/schemas/webthing/",
                       "title": "Metadata"
                     },
                     "help": {
@@ -1233,62 +1328,9 @@
                     "ui": {
                       "link": "ui/",
                       "title": "User Interface"
-                    },
-                    "_myCustomLinkRelType": {
-                      "link": "custom/",
-                      "schema": "http://webofthings.org/schemas/custom.html",
-                      "title": "My custom resource"
-                    },
-                    "...": {
-                      "...": "..."
                     }
-                  },
-                  "properties": [
-                    {
-                      "id": "temp",
-                      "name": "Temperature",
-                      "description": "The outside temperature monitored by this Thing",
-                      "tags": "['sensor', 'air']",
-                      "values": {
-                        "temp": {
-                          "name": "Temperature",
-                          "description": "outside temperature",
-                          "type": "float",
-                          "unit": "degrees Celsius ",
-                          "required": "true",
-                          "minValue": 0,
-                          "maxValue": 100
-                        },
-                        "...": {
-                          "...": "..."
-                        }
-                      }
-                    },
-                    {
-                      "...": "..."
-                    }
-                  ],
-                  "actions": [
-                    {
-                      "id": "display",
-                      "name": "Display",
-                      "description": "Display",
-                      "values": {
-                        "display": {
-                          "name": "display",
-                          "type": "string",
-                          "required": true
-                        },
-                        "...": {
-                          "...": "..."
-                        }
-                      }
-                    },
-                    {
-                      "...": "..."
-                    }
-                  ]
-            }
+                  }
+                }
             </pre>
                 </section>
                 <section>
@@ -1489,7 +1531,7 @@
                     <h2>Update a specific property</h2>
 
                     <p>
-                        In response to an HTTP <code>POST</code> request on a <a>Property URL</a> with an array of
+                        In response to an HTTP <code>PUT</code> request on a <a>Property URL</a> with an array of
                         values as
                         request body, an <a>Extended Web Thing</a> MUST either reject the request with the appropriate
                         status code (e.g. because the <a>Client</a> is unauthenticated or because the <a>Property</a> is
@@ -1497,7 +1539,7 @@
                     </p>
             <pre class="example" title="Update the Values of the Temperature Property">
               --&gt; REQUEST
-              POST {wt}/properties/temperature/
+              PUT {wt}/properties/temperature/
 
               [
                 {
@@ -1507,15 +1549,8 @@
 
 
               &lt;-- RESPONSE
-              201 Created
+              204 NO CONTENT
               Location: {wt}/properties/temperature/
-
-              [
-                {
-                  "temp":24,
-                  "timestamp":"2015-06-14T14:30:00.000Z"
-                }
-              ]
             </pre>
 
                     <p class="note">
@@ -1536,11 +1571,7 @@
                     </p>
             <pre class="example" title="Update multiple properties at once">
               --&gt; REQUEST
-              POST {wt}/properties/
-
-              &lt;-- RESPONSE
-              201 Created
-              Location: {wt}/properties/
+              PUT {wt}/properties/
 
               [
                 {
@@ -1556,10 +1587,13 @@
                     "x":-22,
                     "y":2.1,
                     "z":3,
-                    "timestamp":"2015-06-14T14:30:00.000Z"
                   }
                 }
               ]
+
+              &lt;-- RESPONSE
+              204 NO CONTENT
+              Location: {wt}/properties/
             </pre>
                 </section>
             </section>
@@ -1693,49 +1727,48 @@
                     <h2>Retrieve the description of a specific action</h2>
 
                     <p>
-                        In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code>
-                        link
+                        In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code> link
                         exposed by an <a>Action</a>, an <a>Extended Web Thing</a> MUST return the description of the <a>Action</a>.
                         The JSON representation should be the same as the one returned for that <a>Action</a> in <a
                             href="#retrieve-a-list-of-actions"></a>.
                     </p>
-            <pre class="example" title="Action description example">
-	            --&gt; REQUEST
-	            GET {wt}/actions/upgradefirmware/model
+            <pre class="example" title="Retrieve the Model of an Action Type">
+                --&gt; REQUEST
+                GET {wt}/actions/upgradefirmware/model
 
-&lt;-- RESPONSE
-200 OK
+                &lt;-- RESPONSE
+                200 OK
 
-{
-    "id":"upgradeFirmware",
-    "name":"Upgrade Device Firmware",  
-    "description":"Loads a new firmware from the cloud and installs it.",
-    "values": {
-        "delay":{
-            "name":"Upgrade Delay",
-            "type":"integer",
-            "required":true,
-            "minValue":0,
-            "maxValue":120,
-            "unit":"seconds"
-        },
-        "url":{
-            "name":"Firmware URL",
-            "description":"The URL to get the firmware from (should contain the credentials).",
-            "required":true,
-            "type":"string"
-        },
-        "requester":{
-            "name":"Request User ID",
-            "description":"Your user ID (optional) ",
-            "type":"string"
-        }
-    },
-    "customFields":{
-        "permission":"admin",
-        "priority":"high"
-    }   
-}
+                {
+                    "id":"upgradeFirmware",
+                    "name":"Upgrade Device Firmware",  
+                    "description":"Loads a new firmware from the cloud and installs it.",
+                    "values": {
+                        "delay":{
+                            "name":"Upgrade Delay",
+                            "type":"integer",
+                            "required":true,
+                            "minValue":0,
+                            "maxValue":120,
+                            "unit":"seconds"
+                        },
+                        "url":{
+                            "name":"Firmware URL",
+                            "description":"The URL to get the firmware from (should contain the credentials).",
+                            "required":true,
+                            "type":"string"
+                        },
+                        "requester":{
+                            "name":"Request User ID",
+                            "description":"Your user ID (optional) ",
+                            "type":"string"
+                        }
+                    },
+                    "customFields":{
+                        "permission":"admin",
+                        "priority":"high"
+                    }   
+                }
             </pre>
                     <p>
                         If allowed by the device, a <a>Client</a> can update the model of an <a>Action</a> by sending an HTTP <code>PUT</code> request to the same URL, with the new document as request body.
@@ -1797,58 +1830,6 @@
                 </section>
             </section>
 
-            <section>
-                <h2><dfn>System Resource</dfn></h2>
-
-                <p>
-                    A System resource specifies all the configurations and system properties that an <a>Extended
-                    Web Thing</a> exposes. For example, it can specify what interfaces it has, the version of its
-                    firmware,
-                    etc.
-                </p>
-
-                <section>
-                    <h2>Retrieve the system configuration</h2>
-
-                    <p>
-                        In response to an HTTP <code>GET</code> request on the destination URL of a <code>system</code>
-                        link, an <a>Extended Web Thing</a> MUST return a representation of the underlying <a>System
-                        resource</a>.
-                    </p>
-
-                    <p class="note">
-                        This proposal does not attempt to standardize a common vocabulary for configuration parameters.
-                        Implementers should rely on custom vocabularies, using the <code>customFields</code> JSON field.
-                    </p>
-            <pre class="example" title="System configuration">
-                --&gt; REQUEST
-                GET {wt}/system
-                            
-                &lt;-- RESPONSE
-                200 OK
-
-                {
-                "id": "system",
-                "customFields":{
-                  firmwareVersion": "4.0",
-                  "upSince": "2015-10-31T23:59:59.000Z",
-                  "_connections":{  
-                    "ip": "198.39.3.2",
-                    "port": 8585,
-                    "rootUrl": "http://localhost:8585/",
-                    "publicUrl": "http://devices.webofthings.io/"       
-                  },
-                  "_identifiers":{
-                    "serialNumber":"AX2332-00021",
-                    "ean":"9399392392"
-                  },
-                  "_myCustomMeta1":{},
-                  "_myCustomMeta2":{}
-                }
-              }
-            </pre>
-                </section>
-            </section>
 
             <section>
                 <h2><dfn>Things Resource</dfn></h2>
@@ -1935,15 +1916,8 @@
                     }
                                 
                     &lt;-- RESPONSE
-                    201 CREATED
+                    204 NO CONTENT
                     Location: {wt}/things/p9qrnc89w48oh
-
-                    {
-                      "id":"p9qrnc89w48oh",
-                      "name":"Shopping Cart",
-                      "rootUrl":"https://192.168.0.6/",
-                      "description":"LAN-connected gateway to Lamp #4."
-                    }
                     </pre>
                 </section>
             </section>
@@ -1961,7 +1935,7 @@
                     <img src="subscriptions.png"
                          alt="Clients can subscribe to resources via a protocol upgrade."
                          width="600"/>
-                    <figcaption>Client subscription to a resource via a protocol upgrade, once via Websocket, once via a Webhook (HTTP callback).</figcaption>
+                    <figcaption>Client subscription to a resource via a protocol upgrade, first via Websocket, second via a Webhook (HTTP callback).</figcaption>
                 </figure>
 
                 To subscribe to a resource the following HTTP headers should be provided via a GET request (e.g., on <code>/properties/temp</code>).
@@ -2115,10 +2089,7 @@
             <p>Here is a possible representation of the root resource of an <a>Extended Web Thing</a>:</p>
         <pre class="example" title="Web Thing root resource">
           HTTP Link headers:
-          Link: &lt;product/&gt;; rel="product"
-          Link: &lt;system/&gt;; rel="system"
           Link: &lt;properties/&gt;; rel="properties"
-          Link: &lt;events/&gt;; rel="events"
           Link: &lt;actions/&gt;; rel="actions"
           Link: &lt;meta/&gt;; rel="meta"
           Link: &lt;help/&gt;; rel="help"
@@ -2132,41 +2103,7 @@
             "name":"Shopping Cart",
             "description":"Shopping Cart that updates its location as it moves",
             "tags":["cart","device","test"],
-            "customFields":{"size":"20","color":"blue"},
-            "links":{
-              "product": {
-                "link" : "http://api.evrythng.com/products/8838830wfoifj3jfo4i",
-                "title" : "Product this Web Thing is based on"
-              },
-              "system": {
-                "link": "system/",
-                "title": "Configurations of this Web Thing."      
-              },
-              "properties": {
-                "link": "properties/",
-                "title": "Properties of this Web Thing."
-              },
-              "actions": {
-                "link": "actions/",
-                "title": "Actions of this Web Thing."
-              },
-              "meta": {
-                "link": "http://w3c.org/schemas/webthing/",
-                "title": "Metadata"
-              },
-              "help": {
-                "link": "http://webofthings.org/docs/pi/",
-                "title": "Documentation"
-              },
-              "ui": {
-                "link": "ui/",
-                "title": "User Interface"
-              },
-              "http://webofthings.org/schemas/custom.html": {
-                "link": "custom/",
-                "title": "My custom resource"
-              }   
-            }
+            "customFields":{"size":"20","color":"blue"}
           }
         </pre>
         </section>
