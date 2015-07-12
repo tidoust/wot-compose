@@ -160,7 +160,7 @@
     </p>
     <dl>
         <dt><dfn>Web Thing</dfn></dt>
-        <dd>A virtual representation of a physical object (a Thing) accessible on the Web via a REST API. Examples of
+        <dd>A Web Thing is a digital representation of a physical object accessible via a RESTful Web API. Examples of
             Web Things are: an Arduino board, a garage door, a bottle of soda, a building, a TV, etc. The API of the Web
             Thing can be hosted on the Thing itself or on an intermediate host in the network such as a Gateway or a
             Cloud service (for Things that aren't accessible through the Internet).
@@ -195,16 +195,13 @@
 
         <dt><dfn>Property</dfn>
         <dt>
-        <dd>A <a title="property">Property</a> is a set of values that reflect the current (and possibly
-            future/historical) state of a <a>Web Thing</a>. Properties are "variables" about the Web Thing. Clients can
+        <dd>A <a title="property">Property</a> is a variables of a Web Thing. Properties represent the internal state of a  <a>Web Thing</a>. Clients can
             subscribe to properties to receive a notification message when specific conditions are met (e.g. value of
             one or more properties changed).
         </dd>
 
         <dt><dfn>Action</dfn></dt>
-        <dd><a title="action">Actions</a> are requests that an external entity can send to a <a>Web Thing</a>, which may
-            or may not change the internal state of the <a>Web Thing</a>. This is used mainly to send commands or
-            notifications to a physical object. Examples of Actions are “open” or “close” for a garage door, “enable” or
+        <dd><a title="action">Actions</a> Actions are functions offered by a <a>Web Thing</a>. A Client invokes a function on a <a>Web Thing</a> which initiates a state transition by sending it an Action. Examples of Actions are “open” or “close” for a garage door, “enable” or
             “disable” for a smoke alarm, “check-in” or “scan” for a bottle of soda or a place. The direction of an <a>Action</a>
             is from the <a>Client</a> to the <a>Web Thing</a>.
         </dd>
@@ -1061,7 +1058,7 @@
                 </tr>
                 <tr>
                     <td><code>{wt}/actions</code></td>
-                    <td>-</td>
+                    <td>G,C</td>
                     <td>D,G,C</td>
                     <td>-</td>
                     <td>-</td>
