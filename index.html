@@ -815,11 +815,6 @@
         </table>
         <pre class="example" title="Links Object JSON Example">
           {
-            "links": {
-              "configurations": {
-                "link": "system/",
-                "title": "System configurations of this Web Thing."
-              },
               "properties": {
                 "link": "properties/",
                 "title": "Properties of this Web Thing."
@@ -989,7 +984,7 @@
                 <code>Link</code> HTTP Headers and in the JSON <code>links</code> field as described in <a
                     href="#links"></a> of the <a>Model</a> resource.
             </p>
-            <table>
+            <table width="800">
                 <thead>
                 <tr>
                     <th>REST URL</th>
@@ -1028,15 +1023,6 @@
                     <td>-</td>
                     <td>D,G,C</td>
                     <td><a>Model Resource</a></td>
-                </tr>
-                <tr>
-                    <td><code>{wt}/system</code></td>
-                    <td>-</td>
-                    <td>D,G,C</td>
-                    <td>D,G,C</td>
-                    <td>-</td>
-                    <td>D,G,C</td>
-                    <td><a>System Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/properties</code></td>
@@ -1163,14 +1149,15 @@
                     are authorized and result in updating the fields that were provided in the request body.
                 </p>
             <pre class="example" title="Update my super great car">
-              --&gt; REQUEST
-              PUT {wt}
-                {
-                  "name":"My really super great car"
-                }
+            --&gt; REQUEST
+            PUT {wt}
+    
+            {
+              "name":"My really super great car"
+            }
 
-              &lt;-- RESPONSE
-              204 NO CONTENT
+            &lt;-- RESPONSE
+            204 NO CONTENT
             </pre>
             </section>
             <section>
@@ -1380,7 +1367,7 @@
                 {
                   "id":"temperature",
                   "name":"Kitchen Temperature Sensor",
-                  "value":{
+                  "values":{
                     "temp":22,
                     "timestamp":"2015-06-14T14:30:00.000Z"
                   }  
@@ -1388,7 +1375,7 @@
                 {
                   "id":"status",
                   "name":"Device Status",
-                  "value":{
+                  "values":{
                     "status":"OK",
                     "timestamp":"2015-06-14T14:30:00.000Z"
                   }  
@@ -1396,7 +1383,7 @@
                 {
                   "id":"acceleration",
                   "name":"Acceleration",
-                  "value":{
+                  "values":{
                     "x":22,
                     "y":22.56,
                     "z":1.4,
@@ -1406,7 +1393,7 @@
                 {
                   "id":"engineAngle",
                   "name":"Engine Angle",
-                  "value":{
+                  "values":{
                     "theta":2,
                     "rho":-0.1,
                     "timestamp":"2015-06-14T14:30:00.000Z"
@@ -1643,7 +1630,7 @@
 
               &lt;-- RESPONSE
               200 OK
-              Link: <http://webofthings.org/actions/upgradefirmware>; rel="meta"
+              Link: &lt;http://webofthings.org/actions/upgradefirmware&gt;; rel="meta"
 
               [
                 {
@@ -1798,18 +1785,8 @@
               }
 
               &lt;-- RESPONSE
-              201 Created
+              204 NO RESPONSE
               Location: {wt}/actions/reboot/233
-
-              {
-                "id":"233",
-                "value":{
-                  "delay":50,
-                  "mode":"debug"
-                },
-                "status":"executing",
-                "timestamp":"2015-06-14T14:30:00.000Z"
-              }
             </pre>
                 </section>
 
@@ -1824,6 +1801,25 @@
                         action's
                         status is no longer available.
                     </p>
+
+                    <pre class="example" title="See a Reboot Action">
+                      --&gt; REQUEST
+                      GET {wt}/actions/reboot/233
+
+                      &lt;-- RESPONSE
+                      200 OK
+
+                      {
+                        "id":"233",
+                        "value":{
+                          "delay":50,
+                          "mode":"debug"
+                        },
+                        "status":"executing",
+                        "timestamp":"2015-06-14T14:30:00.000Z"
+                      }
+                    </pre>
+
                 </section>
             </section>
 
