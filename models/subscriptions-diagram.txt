@@ -1,0 +1,11 @@
+note left of Client: Subscription via WebSocket
+Client->WT: HTTP GET /properties/temp
+note right of Client: Upgrade: websocket
+WT->Client: 101 Switching Protocol
+note right of WT: Subscription-ID: abc1234
+
+note left of Client: Subscription via WebHook
+Client->WT: HTTP GET /actions/onoff
+note right of Client: Upgrade: webhook
+WT->Client: 200 OK
+note right of WT: Subscription-ID: abc1235

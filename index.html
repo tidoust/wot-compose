@@ -160,7 +160,7 @@
     </p>
     <dl>
         <dt><dfn>Web Thing</dfn></dt>
-        <dd>A virtual representation of a physical object (a Thing) accessible on the Web via a REST API. Examples of
+        <dd>A Web Thing is a digital representation of a physical object accessible via a RESTful Web API. Examples of
             Web Things are: an Arduino board, a garage door, a bottle of soda, a building, a TV, etc. The API of the Web
             Thing can be hosted on the Thing itself or on an intermediate host in the network such as a Gateway or a
             Cloud service (for Things that aren't accessible through the Internet).
@@ -195,16 +195,13 @@
 
         <dt><dfn>Property</dfn>
         <dt>
-        <dd>A <a title="property">Property</a> is a set of values that reflect the current (and possibly
-            future/historical) state of a <a>Web Thing</a>. Properties are "variables" about the Web Thing. Clients can
+        <dd>A <a title="property">Property</a> is a variables of a Web Thing. Properties represent the internal state of a  <a>Web Thing</a>. Clients can
             subscribe to properties to receive a notification message when specific conditions are met (e.g. value of
             one or more properties changed).
         </dd>
 
         <dt><dfn>Action</dfn></dt>
-        <dd><a title="action">Actions</a> are requests that an external entity can send to a <a>Web Thing</a>, which may
-            or may not change the internal state of the <a>Web Thing</a>. This is used mainly to send commands or
-            notifications to a physical object. Examples of Actions are “open” or “close” for a garage door, “enable” or
+        <dd><a title="action">Actions</a> Actions are functions offered by a <a>Web Thing</a>. A Client invokes a function on a <a>Web Thing</a> which initiates a state transition by sending it an Action. Examples of Actions are “open” or “close” for a garage door, “enable” or
             “disable” for a smoke alarm, “check-in” or “scan” for a bottle of soda or a place. The direction of an <a>Action</a>
             is from the <a>Client</a> to the <a>Web Thing</a>.
         </dd>
@@ -235,7 +232,7 @@
     </p>
 
     <section>
-        <h2>Direct connectivity</h2>
+        <h2><dfn>Direct</dfn> connectivity</h2>
 
         <p>
             In the most straightforward case, a <a>Web Thing</a> is simply a Web API that <a title="Client">Clients</a>
@@ -252,7 +249,7 @@
     </section>
 
     <section>
-        <h2>Gateway-based connectivity</h2>
+        <h2><dfn>Gateway</dfn> proxied connectivity</h2>
 
         <p>
             Gateway based connectivity is used when a Thing cannot offer a Web API directly. In this case an
@@ -268,7 +265,7 @@
     </section>
 
     <section>
-        <h2>Cloud-based connectivity</h2>
+        <h2><dfn>Cloud</dfn> proxied connectivity</h2>
 
         <p>
             This third case is similar to <a href="#gateway-based-connectivity"></a>. However, in this case the gateway
@@ -486,7 +483,16 @@
         </section>
 
         <section>
-            <h2>R1.4 – A <a>Web Thing</a> SHOULD provide a default human-readable documentation</h2>
+            <h2>R1.4 – A <a>Web Thing</a> SHOULD return a 204 for all write operations</h2>
+
+            <p>
+                By default, all PUT, POST, and DELETE requests to a Web Thing should not return the payload of the object that was created/modified, therefore should return a <code>204 NO CONTENT</code> response and no response body. 
+            </p>
+
+        </section>
+
+        <section>
+            <h2>R1.5 – A <a>Web Thing</a> SHOULD provide a default human-readable documentation</h2>
 
             <p>
                 To interact with a <a>Web Thing</a>, a Client needs to know what resources are available on the Web
@@ -600,11 +606,11 @@
             <td>An execution of an action</td>
         </tr>
         <tr>
-            <td><code>{wt}/*/subscriptions/</code>
-            <td>Subscriptions to a resource</td>
+            <td><code>{wt}/subscriptions/</code>
+            <td>Subscriptions to resources</td>
         </tr>
         <tr>
-            <td><code>{wt}/*/subscriptions/{id}</code>
+            <td><code>{wt}/subscriptions/{id}</code>
             <td>A specific subscription</td>
         </tr>
         </tbody>
@@ -686,17 +692,15 @@
           "customFields":{
               "size":"20",
               "color":"blue"
-          },
-          "links":{
-              ... (see below)...
           }
-          ...
+        }
         </pre>
         <p>
             The JSON response MAY contain additional fields, depending on the type of resource being considered, check
             the <a href="#resources"></a> for details.
         </p>
     </section>
+
 
     <section>
         <h2>Links</h2>
@@ -709,11 +713,11 @@
         </p>
 
         <p>
-            In particular, each link is defined by a <strong>relation type</strong>, the actual URL of the sub-resource,
-            and a human-readable identifier for the relation. <a
+            In particular, each link is defined by a <strong>relation type</strong> (the "link type"), the actual URL of the sub-resource (the "link"),
+            and a human-readable identifier for the relation (the "title"). <a
                 href="https://tools.ietf.org/html/rfc5988#section-6.2.2">Relation types</a> defined in [[!RFC5988]] may
-            be used to characterize the relation with the sub-resource. Additionally, this specification defines the
-            following relation types:
+            be used to characterize the relation with the sub-resource. Additionally, the Web Things model defines the
+            following aditionnal relation types:
         </p>
         <table>
             <thead>
@@ -733,11 +737,6 @@
                 <td><code>actions</code></td>
                 <td>The actions that this resource can perform.</td>
                 <td><a href="#actions"></a></td>
-            </tr>
-            <tr>
-                <td><code>system</code></td>
-                <td>The system configurations and parameters of this resource.</td>
-                <td><a href="#system"></a></td>
             </tr>
             <tr>
                 <td><code>things</code></td>
@@ -771,12 +770,11 @@
         </p>
 
         <p>
-            In addition to exposing them in the HTTP Header of earch resource, links MUST be exposed from the
+            In addition to exposing them in the HTTP Header of earch resource, links SHOULD be exposed from the
             <a>Model</a> resource of a <a>Extended Web Thing</a> using the <code>links</code> field of the JSON payload.
-            The keys of this object
-            represent the relation type while each value describes the actual link as illustrated below.
+            The keys of this object represent the relation type while each value describes the actual link as illustrated below.
         </p>
-        <pre class="example" title="Links object model">
+        <pre class="example" title="Links Object JSON Model">
         {
           ...
           "links":{
@@ -815,7 +813,7 @@
             </tr>
             </tbody>
         </table>
-        <pre class="example" title="Links object">
+        <pre class="example" title="Links Object JSON Example">
           {
             "links": {
               "configurations": {
@@ -854,6 +852,21 @@
               "..." : {"..." : {"..."}}
           }
         </pre>
+
+        <p>
+            A <code>GET</code> on any resource of a Web Thing should return the list of all related resources as "Link" HTTP headers, which allows to use the same standard model regardless of the representation chosen. This is an example of the headers returned after a <code>GET {wt}/</code> on the root URL of a Web Thing:
+        </p>
+
+        <pre class="example" title="Links in the HTTP Header">
+            Link: &lt;properties/&gt;; rel="properties"
+            Link: &lt;actions/&gt;; rel="actions"
+            Link: &lt;product/&gt;; rel="product"
+            Link: &lt;meta/&gt;; rel="meta"
+            Link: &lt;help/&gt;; rel="help"
+            Link: &lt;ui/&gt;; rel="ui"
+        </pre>
+
+
     </section>
 
     <section>
@@ -907,7 +920,7 @@
             <tr>
                 <td><code>required</code></td>
                 <td>Boolean</td>
-                <td>Specifies whether this value is requried or optional (useful in descriptions of an <a>Action</a>).
+                <td>Specifies whether this value is required or optional. If omitted, the default is <code>true</code>.
                 </td>
             </tr>
             <tr>
@@ -963,16 +976,18 @@
             <h2>HTTP verbs support</h2>
 
             <p>
-                Ideally, an <a>Extended Web Thing</a> SHOULD support all end-points. The target column in the table
+                Ideally, an <a>Extended Web Thing</a> SHOULD support all end-points. The letters <code>D,G,C</code> refer to <a href="#web-things-integration-patterns"></a> and is here as an indication of which type of integration would typically implement these resources. A <code>D</code> means that the resource should be implemented on Web Things using the the <a>Direct</a> integration pattern, a <code>G</code> means the resource should be implemented when using the <a>Gateway</a> integration pattern, a <code>C</code> means the resource should be implemented when using the <a>Cloud</a> integration pattern.
+
+                The target column in the table
                 below refers to <a href="#web-things-integration-patterns"></a> and is here as an indication of which
                 type of Thing would typically implement these end points.
             </p>
 
             <p class="note">
-                The URLs used in this table are purely indicative as an <a>Extended Web Thing</a> may choose to use
-                other URLs for them. The actual URLs are to be reported in the representation of the root resource in
-                <code>Link</code> HTTP Headers or using the JSON <code>links</code> field as described in <a
-                    href="#links"></a>.
+                The URLs used in this table are indicative as an <a>Extended Web Thing</a> may choose to use
+                other URLs for them. The actual URLs are to be reported in the representation of the in
+                <code>Link</code> HTTP Headers and in the JSON <code>links</code> field as described in <a
+                    href="#links"></a> of the <a>Model</a> resource.
             </p>
             <table>
                 <thead>
@@ -983,117 +998,117 @@
                     <th>PUT</th>
                     <th>DELETE</th>
                     <th>OPTIONS</th>
-                    <th>Target</th>
+                    <th>Details</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td><code>{wt}</code></td>
+                    <td>G,C</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
+                    <td>G,C</td>
+                    <td>D,G,C</td>
+                    <td><a>Thing Resource</a></td>
+                </tr>
+                <tr>
+                    <td><code>{wt}/subscriptions</code></td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
+                    <td>D,G,C</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Things, Gateways, Clouds</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
+                    <td><a>Subscriptions Resource</a></td>
+                </tr>
+                <tr>
+                    <td><code>{wt}/model</code></td>
+                    <td>-</td>
+                    <td>D,G,C</td>
+                    <td>G,C</td>
+                    <td>-</td>
+                    <td>D,G,C</td>
+                    <td><a>Model Resource</a></td>
+                </tr>
+                <tr>
+                    <td><code>{wt}/system</code></td>
+                    <td>-</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
+                    <td>-</td>
+                    <td>D,G,C</td>
+                    <td><a>System Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/properties</code></td>
-                    <td>Yes</td>
-                    <td>Yes</td>
+                    <td>G,C</td>
+                    <td>D,G,C</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Things, Gateways, Clouds</td>
+                    <td>D,G,C</td>
+                    <td><a>Properties Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/properties/{id}</code></td>
-                    <td>Yes</td>
-                    <td>Yes</td>
                     <td>-</td>
+                    <td>D,G,C</td>
+                    <td>G,C</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Things, Gateways, Clouds</td>
-                </tr>
-                <tr>
-                    <td><code>{wt}/properties/{id}/model</code></td>
-                    <td>-</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>-</td>
-                    <td>Yes</td>
-                    <td>Things, Gateways, Clouds</td>
+                    <td>D,G,C</td>
+                    <td><a>Properties Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/actions</code></td>
+                    <td>G,C</td>
+                    <td>D,G,C</td>
                     <td>-</td>
-                    <td>Yes</td>
                     <td>-</td>
-                    <td>-</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
+                    <td>D,G,C</td>
+                    <td><a>Actions Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/actions/{id}</code></td>
-                    <td>Yes</td>
-                    <td>Yes</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
+                    <td>D,G,C</td>
+                    <td><a>Actions Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/actions/{id}/{actionId}</code></td>
                     <td>-</td>
-                    <td>Yes</td>
+                    <td>D,G,C</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
-                </tr>
-                <tr>
-                    <td><code>{wt}/actions/{id}/model</code></td>
-                    <td>-</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>-</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
+                    <td><a>Actions Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/things</code></td>
-                    <td>Yes</td>
-                    <td>Yes</td>
+                    <td>G,C</td>
+                    <td>G,C</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
+                    <td>G,C</td>
+                    <td><a>Things Resource</a></td>
                 </tr>
                 <tr>
                     <td><code>{wt}/things/{id}</code></td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Gateways, Clouds</td>
-                </tr>
-                <tr>
-                    <td><code>{wt}/*/subscriptions</code></td>
                     <td>-</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Things, Gateways, Clouds</td>
+                    <td>G,C</td>
+                    <td>G,C</td>
+                    <td>G,C</td>
+                    <td>G,C</td>
+                    <td><a>Things Resource</a></td>
                 </tr>
                 </tbody>
             </table>
         </section>
         <section>
-            <h2>Thing</h2>
+            <h2>Web <dfn>Thing Resource</dfn></h2>
 
             <p>
-                A <a>Thing</a> is the virtual representation of a physical object. It is the root object of the Web
+                A <a>Web Thing</a> (<dfn>Thing</dfn> hereafter) is the virtual representation of a physical object. It is the root resource of the Web
                 Things model.
             </p>
 
@@ -1102,31 +1117,39 @@
                 the result of resolving the <code>id</code> returned in the representation of the <a>Things</a>
                 resource.
             </p>
-
             <section>
-                <h2>Retrieve a <a>Thing</a></h2>
+                <h2>Retrieve a Thing</h2>
 
                 <p>
-                    In response to an HTTP <code>GET</code> request on the root URL of a <code>Thing</code>, an <a>Extended
-                    Web Thing</a> MUST return an object that its representation.
+                    In response to an HTTP <code>GET</code> request on the root URL of a <code>Thing</code>, an <a>Extended Web Thing</a> MUST return an object that its representation.
                 </p>
-            <pre class="example" title="List of properties">
-              HTTP Link headers returned in the response:
-              Link: &lt;model/&gt;; rel="model"
+            <pre class="example" title="Get the Root Resource of a Web Thing">
+            --&gt; REQUEST
+            GET {wt}
+ 
+            &lt;-- RESPONSE
+            200 OK
+            Link: &lt;model/&gt;; rel="model"
+            Link: &lt;properties/&gt;; rel="properties"
+            Link: &lt;actions/&gt;; rel="actions"
+            Link: &lt;product/&gt;; rel="product"
+            Link: &lt;meta/&gt;; rel="meta"
+            Link: &lt;help/&gt;; rel="help"
+            Link: &lt;ui/&gt;; rel="ui"
+            Link: &lt;_myCustomLinkRelType/&gt;; rel="_myCustomLinkRelType"
 
-                {
-                  "id": "myCar",
-                  "name": "My super great car",
-                  "description": "This is such a great car. Seriously!",
-                  "createdAd": "2012-08-24T17:29:11.683Z",
-                  "updatedAd": "2012-08-24T17:29:11.683Z",
-                  "tags":["cart", "device", "test"],
-                  "customFields":
-                  {
+            {
+              "id": "myCar",
+              "name": "My super great car",
+              "description": "This is such a great car.",
+              "createdAd": "2012-08-24T17:29:11.683Z",
+              "updatedAd": "2012-08-24T17:29:11.683Z",
+              "tags":["cart", "device", "test"],
+              "customFields":{
                   "size": "20",
                   "color":"blue"
-                  }
-                }
+              }
+            }
             </pre>
             </section>
             <section>
@@ -1147,28 +1170,14 @@
                 }
 
               &lt;-- RESPONSE
-              200 OK
-              Location: {wt}
-              {
-                  "id": "myCar",
-                  "name": "My really super great car",
-                  "description": "This is such a great car. Seriously!",
-                  "createdAd": "2012-08-24T17:29:11.683Z",
-                  "updatedAd": "2012-08-24T17:29:11.683Z",
-                  "tags":["cart", "device", "test"],
-                  "customFields":
-                  {
-                  "size": "20",
-                  "color":"blue"
-                  }
-                }
+              204 NO CONTENT
             </pre>
             </section>
             <section>
-                <h2>Model</h2>
+                <h2><dfn>Model Resource</dfn></h2>
 
                 <p>
-                    A <dfn>Model</dfn> describes the values of <code>properties</code> and <code>actions</code> that can
+                    A <a>Model</a> describes the values of <code>properties</code> and <code>actions</code> that can
                     be
                     performed on <a>Things</a>.
                 </p>
@@ -1188,37 +1197,125 @@
                         link, an <a>Extended Web Thing</a> MUST return an object containing the model of the Thing.
                     </p>
             <pre class="example" title="Model of a Thing">
-                HTTP Link headers returned in the response:
-                Link: &lt;configurations/&gt;; rel="configurations"
-                Link: &lt;properties/&gt;; rel="properties"
-                Link: &lt;actions/&gt;; rel="actions"
-                Link: &lt;product/&gt;; rel="product"
-                Link: &lt;meta/&gt;; rel="meta"
-                Link: &lt;help/&gt;; rel="help"
-                Link: &lt;ui/&gt;; rel="ui"
-                Link: &lt;_myCustomLinkRelType/&gt;; rel="_myCustomLinkRelType"
+                --&gt; REQUEST
+                GET {wt}/model
 
-                JSON response:
+                &lt;-- RESPONSE
+                200 OK
+
                 {
-                  "links": {
-                    "configurations": {
-                      "link": "system/",
-                      "title": "System configurations of this Web Thing."
+                  "id":"pi",
+                  "name": "My WoT Raspberry PI",
+                  "description": "A simple WoT-connected Raspberry PI for the WoT book.",
+                  "tags": ["raspberry","pi","WoT"],
+                  "links":{
+                    "product": {
+                      "link" : "https://www.raspberrypi.org/products/raspberry-pi-2-model-b/",
+                      "title" : "Product this Web Thing is based on"
                     },
                     "properties": {
-                      "link": "properties/",
-                      "title": "Properties of this Web Thing."
+                      "link" : "http://w3c.org/schemas/properties/",
+                      "title" : "List of Properties",
+                      "resources":[
+                        {
+                          "id":"temperature",
+                          "name": "Temperature Sensor",
+                          "description": "An ambient temperature sensor.",
+                          "values":{
+                            "temp":{
+                              "name":"Temperature sensor",
+                              "description":"The temperature in celsius",
+                              "unit":"celsius",
+                              "value": 0,
+                              "customFields":{
+                                "gpio": 21
+                              }
+                            }
+                          },
+                          "tags":["sensor","public","temperature"]
+                        },
+                        {
+                          "id":"humidity",
+                          "name": "Humidity Sensor",
+                          "description": "An ambient humidity sensor.",
+                          "values":{
+                            "h":{
+                              "name":"Humidity",
+                              "description":"Percentage of Humidity",
+                              "unit": "%",
+                              "value": 0,
+                              "customFields":{
+                                "gpio": 21
+                              }
+                            }
+                          },
+                          "tags":["sensor","public"]
+                        },
+                        {
+                          "id":"pir",
+                          "name": "Passive Infrared",
+                          "description": "A passive infrared sensor.",
+                          "values":{
+                            "p":{
+                              "name":"Presence",
+                              "description":"Current sensor value (true=motion detected)",
+                              "type":"boolean",
+                              "value": false,
+                              "customFields":{
+                                "gpio": 20
+                              }
+                            }
+                          },
+                          "tags":["sensor","public"]
+                        },
+                        {
+                          "id":"leds",
+                          "name": "LEDs",
+                          "description": "The LEDs of this device.",
+                          "values":{
+                            "1": {
+                              "name": "LED 1",
+                              "value": false,
+                              "customFields":{
+                                "gpio": 17
+                              }
+                            },
+                            "2": {
+                              "name": "LED 2",
+                              "value": false,
+                              "customFields":{
+                                "gpio": 19
+                              }
+                            }
+                          },
+                          "tags":["sensor","public"]
+                        }
+                      ]
                     },
-                    "actions": {
-                      "link": "actions/",
-                      "title": "Actions of this Web Thing."
-                    },
-                    "product": {
-                      "link": "http://api.evrythng.com/products/xyz",
-                      "title": "Product this Web Thing is an instance of"
+                    "actions":{
+                      "link": "http://w3c.org/schemas/actions/",
+                      "title": "Actions of this Web Thing",
+                      "resources":[
+                        {
+                          "id":"displayText",
+                          "name":"Display text on the LCD screen",  
+                          "values":{
+                            "text":{
+                              "type":"String",
+                              "required":true
+                            },
+                            "delay":{
+                              "type":"Integer",
+                              "minValue":30,
+                              "maxValue":1800,
+                              "unit":"seconds"
+                            }
+                          }
+                        }
+                      ]
                     },
                     "meta": {
-                      "link": "http://webofthings.org/schemas/web-thing/",
+                      "link": "http://w3c.org/schemas/webthing/",
                       "title": "Metadata"
                     },
                     "help": {
@@ -1228,62 +1325,9 @@
                     "ui": {
                       "link": "ui/",
                       "title": "User Interface"
-                    },
-                    "_myCustomLinkRelType": {
-                      "link": "custom/",
-                      "schema": "http://webofthings.org/schemas/custom.html",
-                      "title": "My custom resource"
-                    },
-                    "...": {
-                      "...": "..."
                     }
-                  },
-                  "properties": [
-                    {
-                      "id": "temp",
-                      "name": "Temperature",
-                      "description": "The outside temperature monitored by this Thing",
-                      "tags": "['sensor', 'air']",
-                      "values": {
-                        "temp": {
-                          "name": "Temperature",
-                          "description": "outside temperature",
-                          "type": "float",
-                          "unit": "degrees Celsius ",
-                          "required": "true",
-                          "minValue": 0,
-                          "maxValue": 100
-                        },
-                        "...": {
-                          "...": "..."
-                        }
-                      }
-                    },
-                    {
-                      "...": "..."
-                    }
-                  ],
-                  "actions": [
-                    {
-                      "id": "display",
-                      "name": "Display",
-                      "description": "Display",
-                      "values": {
-                        "display": {
-                          "name": "display",
-                          "type": "string",
-                          "required": true
-                        },
-                        "...": {
-                          "...": "..."
-                        }
-                      }
-                    },
-                    {
-                      "...": "..."
-                    }
-                  ]
-            }
+                  }
+                }
             </pre>
                 </section>
                 <section>
@@ -1298,7 +1342,7 @@
                 </section>
             </section>
             <section>
-                <h2>Properties</h2>
+                <h2><dfn>Properties Resource</dfn></h2>
 
                 <p>
                     A <a>Property</a> keeps track of a set of variables about a device (its location, the temperature
@@ -1324,11 +1368,14 @@
                         contains.
                     </p>
             <pre class="example" title="List of properties">
-              HTTP Link headers returned in the response:
-              Link: &lt;subscriptions/&gt;; rel="subscriptions"
+              --&gt; REQUEST
+              GET {wt}/properties
+
+
+              &lt;-- RESPONSE
+              200 OK
               Link: &lt;http://webofthings.io/properties&gt;; rel="meta"
 
-              JSON response:
               [
                 {
                   "id":"temperature",
@@ -1378,22 +1425,21 @@
                     </p>
 
                     <p class="note">
-                        Some Web Things might not store the history of sensor readings but only the most recent value of
-                        a
-                        given property, in which case the array will always contain one object. However, Web Things on
-                        clouds and gateway are likely to store many past values of the property, in which case they can
-                        be
-                        retrieved using pagination and filters.
+                        Some Web Things might not store the history of sensor readings but only the most recent value of a given property, in which case the array will always contain one object. However, Web Things on clouds and gateway are likely to store many past values of the property, in which case they can
+                        be retrieved using pagination and filters.
                     </p>
 
                     <p class="issue" title="@vladounet">
                         Describe how pagination and last/filtered contents would work.
                     </p>
             <pre class="example" title="Retrieve the last measures of an accelerometer property">
-              HTTP Link headers:
+              --&gt; REQUEST
+              GET {wt}/properties/acceleration
+
+              &lt;-- RESPONSE
+              200 OK
               Link &lt;model/&gt;; rel="model"
 
-              JSON response:
               [
                 {
                   "x":11,
@@ -1440,11 +1486,14 @@
                         </tr>
                         </tbody>
                     </table>
-            <pre class="example" title="Property description example">
-              HTTP Link headers:
+            <pre class="example" title="Property Model Example">
+              --&gt; REQUEST
+              GET {wt}/properties/acceleration/
+
+              &lt;-- RESPONSE
+              200 OK
               Link: &lt;http://webofthings.org/properties/acceleration&gt;; rel="meta"
 
-              JSON response:
               {
                 "id":"acceleration",
                 "name": "Acceleration",
@@ -1469,16 +1518,8 @@
                 "tags":["sensor","public"]
               }
             </pre>
-                    <p>
-                        If allowed by the device, a <a>Client</a> can update the model of a <a>Property</a> by sending
-                        an
-                        HTTP <code>PUT</code> request to the same URL, with the new document as request body.
-                    </p>
-
                     <p class="note">
-                        Usually, the model will be hardcoded in the device and generally cannot be altered by clients.
-                        If
-                        Web Things is hosted on a cloud service, the model can be updated with a PUT.
+                        Usually, the model will be hardcoded in the device and generally cannot be altered by clients. If Web Things is hosted on a cloud service, the model model of a <a>Property</a> can be updated by sending an HTTP <code>PUT</code> request to the same URL, with the new model document in the request body.
                     </p>
 
                 </section>
@@ -1487,15 +1528,16 @@
                     <h2>Update a specific property</h2>
 
                     <p>
-                        In response to an HTTP <code>POST</code> request on a <a>Property URL</a> with an array of
+                        In response to an HTTP <code>PUT</code> request on a <a>Property URL</a> with an array of
                         values as
                         request body, an <a>Extended Web Thing</a> MUST either reject the request with the appropriate
                         status code (e.g. because the <a>Client</a> is unauthenticated or because the <a>Property</a> is
-                        read-only) or store the provided value(s) as new concrete values for the <a>Property</a>.
+                        read-only) or store the provided value(s) as new values for the <a>Property</a>. The body of the request SHOULD always be an array of values (at least one), which allows to send several property value updates within a single request. 
                     </p>
-            <pre class="example" title="Update the temperature property">
+            <pre class="example" title="Update the Values of the Temperature Property">
               --&gt; REQUEST
-              POST {wt}/properties/temperature/
+              PUT {wt}/properties/temperature/
+
               [
                 {
                   "temp":24
@@ -1504,37 +1546,30 @@
 
 
               &lt;-- RESPONSE
-              201 Created
+              204 NO CONTENT
               Location: {wt}/properties/temperature/
-              [
-                {
-                  "temp":24,
-                  "timestamp":"2015-06-14T14:30:00.000Z"
-                }
-              ]
             </pre>
-                    <p class="issue" title="@tidoust">
-                        The <code>Location</code> URL returned in the 201 response seems wrong: that URL already existed
-                        before the request so has not been created. That should rather be <code>{wt}/properties/temperature/{someid}</code>
-                        if we want to expose the URL or we should use a <code>PUT</code> request.
-                        <br/>Actually, the question is: why allow passing an array instead of just a single value?
+
+                    <p class="note">
+                        A <a>Property URL</a> is always a collection of resources, therefore its representation is an array of individual values with different timestamps. The individual values are not adressable individually, therefore the <code>Location:</code> header in response to a successful property update request SHOULD always be the <a>Property URL</a> itself. 
                     </p>
+
                 </section>
 
                 <section>
                     <h2>Update multiple properties at once</h2>
 
                     <p>
-                        In response to an HTTP <code>POST</code> request on the destination URL of a
-                        <code>properties</code>
+                        In response to an HTTP <code>POST</code> request on the destination URL of a <code>properties</code>
                         link, an <a>Extended Web Thing</a> MUST either reject the request with the appropriate status
                         code
-                        or store the provided values as new concrete values for each of the provided <a
+                        or store the provided values as new values for each of the provided <a
                             title="Property">Properties</a>.
                     </p>
             <pre class="example" title="Update multiple properties at once">
               --&gt; REQUEST
-              POST {wt}/properties/
+              PUT {wt}/properties/
+
               [
                 {
                   "id":"temperature",
@@ -1549,16 +1584,19 @@
                     "x":-22,
                     "y":2.1,
                     "z":3,
-                    "timestamp":"2015-06-14T14:30:00.000Z"
                   }
                 }
               ]
+
+              &lt;-- RESPONSE
+              204 NO CONTENT
+              Location: {wt}/properties/
             </pre>
                 </section>
             </section>
 
             <section>
-                <h2>Actions</h2>
+                <h2><dfn>Actions Resource</dfn></h2>
 
                 <p>
                     On top of <a href="#common-json-fields"></a>, the JSON representation used to describe an
@@ -1603,10 +1641,10 @@
               GET {wt}/actions
 
 
-              HTTP Link headers returned in the response:
+              &lt;-- RESPONSE
+              200 OK
               Link: <http://webofthings.org/actions/upgradefirmware>; rel="meta"
 
-              JSON response:
               [
                 {
                   "id":"upgradeFirmware",
@@ -1654,11 +1692,11 @@
               --&gt; REQUEST
               GET {wt}/actions/upgradefirmware
 
-              HTTP Link headers:
+              &lt;-- RESPONSE
+              200 OK
               Link: &lt;http://webofthings.org/actions/upgradefirmware&gt;; rel="meta"
               Link: &lt;model/&gt;; rel="model"
 
-              JSON response:
               [
                 {
                   "id":"223",
@@ -1686,37 +1724,51 @@
                     <h2>Retrieve the description of a specific action</h2>
 
                     <p>
-                        In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code>
-                        link
+                        In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code> link
                         exposed by an <a>Action</a>, an <a>Extended Web Thing</a> MUST return the description of the <a>Action</a>.
                         The JSON representation should be the same as the one returned for that <a>Action</a> in <a
                             href="#retrieve-a-list-of-actions"></a>.
                     </p>
-            <pre class="example" title="Action description example">
-	            --&gt; REQUEST
-	            GET {wt}/actions/upgradefirmware
-                [
-                  {
-                      "id":223,
-                      "value":{
-                          "delay":30,
-                          "mode":"SOFT"
-                      },
-                      "timestamp":"2015-06-14T18:33:25.938Z"
-                  },
-                  {
-                      "id":222,
-                      "value":{
-                          "delay":60,
-                          "mode":"FORCE"
-                      },
-                      "timestamp":"2015-06-14T14:22:23.233Z"
-                  }
-                ]
+            <pre class="example" title="Retrieve the Model of an Action Type">
+                --&gt; REQUEST
+                GET {wt}/actions/upgradefirmware/model
+
+                &lt;-- RESPONSE
+                200 OK
+
+                {
+                    "id":"upgradeFirmware",
+                    "name":"Upgrade Device Firmware",  
+                    "description":"Loads a new firmware from the cloud and installs it.",
+                    "values": {
+                        "delay":{
+                            "name":"Upgrade Delay",
+                            "type":"integer",
+                            "required":true,
+                            "minValue":0,
+                            "maxValue":120,
+                            "unit":"seconds"
+                        },
+                        "url":{
+                            "name":"Firmware URL",
+                            "description":"The URL to get the firmware from (should contain the credentials).",
+                            "required":true,
+                            "type":"string"
+                        },
+                        "requester":{
+                            "name":"Request User ID",
+                            "description":"Your user ID (optional) ",
+                            "type":"string"
+                        }
+                    },
+                    "customFields":{
+                        "permission":"admin",
+                        "priority":"high"
+                    }   
+                }
             </pre>
                     <p>
-                        If allowed by the device, a <a>Client</a> can update the model of an <a>Action</a> by sending an
-                        HTTP <code>PUT</code> request to the same URL, with the new document as request body.
+                        If allowed by the device, a <a>Client</a> can update the model of an <a>Action</a> by sending an HTTP <code>PUT</code> request to the same URL, with the new document as request body.
                     </p>
                 </section>
 
@@ -1739,6 +1791,7 @@
             <pre class="example" title="Schedule a reboot">
               --&gt; REQUEST
               POST {wt}/actions/reboot
+
               {
                 "delay":50,
                 "mode":"debug"
@@ -1747,6 +1800,7 @@
               &lt;-- RESPONSE
               201 Created
               Location: {wt}/actions/reboot/233
+
               {
                 "id":"233",
                 "value":{
@@ -1773,58 +1827,12 @@
                 </section>
             </section>
 
-            <section>
-                <h2>System</h2>
-
-                <p>
-                    A <dfn>System resource</dfn> specifies all the configurations and system properties that an <a>Extended
-                    Web Thing</a> exposes. For example, it can specify what interfaces it has, the version of its
-                    firmware,
-                    etc.
-                </p>
-
-                <section>
-                    <h2>Retrieve the system configuration</h2>
-
-                    <p>
-                        In response to an HTTP <code>GET</code> request on the destination URL of a <code>system</code>
-                        link, an <a>Extended Web Thing</a> MUST return a representation of the underlying <a>System
-                        resource</a>.
-                    </p>
-
-                    <p class="note">
-                        This proposal does not attempt to standardize a common vocabulary for configuration parameters.
-                        Implementers should rely on custom vocabularies, using the <code>customFields</code> JSON field.
-                    </p>
-            <pre class="example" title="System configuration">
-              {
-                "id": "system",
-                "customFields":{
-                  firmwareVersion": "4.0",
-                  "upSince": "2015-10-31T23:59:59.000Z",
-                  "_connections":{  
-                    "ip": "198.39.3.2",
-                    "port": 8585,
-                    "rootUrl": "http://localhost:8585/",
-                    "publicUrl": "http://devices.webofthings.io/"       
-                  },
-                  "_identifiers":{
-                    "serialNumber":"AX2332-00021",
-                    "ean":"9399392392"
-                  },
-                  "_myCustomMeta1":{},
-                  "_myCustomMeta2":{}
-                }
-              }
-            </pre>
-                </section>
-            </section>
 
             <section>
-                <h2>Things</h2>
+                <h2><dfn>Things Resource</dfn></h2>
 
                 <p>
-                    A <a>Web Thing</a> may proxy other <a title="Web Thing">Web Things</a>. For instance, it is expected
+                    A <a>Web Thing</a> may proxy other <a title="Web Thing">Web Things</a> via the Things resource. For instance, it is expected
                     that gateways and cloud services will proxy a number of third party devices. On top of <a
                         href="#common-json-fields"></a>, the JSON representation used to describe a link to another
                     thing
@@ -1855,50 +1863,124 @@
                         In response to an HTTP <code>GET</code> request on the destination URL of a <code>things</code>
                         link, an <a>Extended Web Thing</a> MUST return an array of things descriptions.
                     </p>
-            <pre class="example" title="List of things proxied by a device">
-            [
-              {
-                "id":"982tjqogeih",
-                "name":"Shopping Cart"
-              },  
-              {
-                "id":"2398h87wt489foz",
-                "name":"Shopping Cart",
-                "rootUrl":"/pi",
-                "description":"Shopping Cart that updates its location as it moves"
-              },  
-              {
-                "id":"p9qrnc89w48oh",
-                "name":"Shopping Cart",
-                "rootUrl":"https://192.168.0.6/",
-                "description":"LAN-connected gateway to Lamp #4."
-              }
-            ]
-            </pre>
-                    <p class="issue" title="@tidoust">
-                        So, if an <code>id</code> is to be interpreted as a URL, <code>rootUrl</code> is not needed
-                        here,
-                        and the ID should rather be the actual URL of these things. Can I drop <code>rootUrl</code>?
+                    <pre class="example" title="List of things proxied by a device">
+                    --&gt; REQUEST
+                    GET {wt}/things
+                                
+                    &lt;-- RESPONSE
+                    200 OK
+
+                    [
+                      {
+                        "id":"982tjqogeih",
+                        "name":"Shopping Cart"
+                      },  
+                      {
+                        "id":"2398h87wt489foz",
+                        "name":"Shopping Cart",
+                        "rootUrl":"/pi",
+                        "description":"Shopping Cart that updates its location as it moves"
+                      },  
+                      {
+                        "id":"p9qrnc89w48oh",
+                        "name":"Shopping Cart",
+                        "rootUrl":"https://192.168.0.6/",
+                        "description":"LAN-connected gateway to Lamp #4."
+                      }
+                    ]
+                    </pre>
+                    <p class="note">
+                        The <code>id</code> can be interpreted as a URL, but if a Web Thing can be directly accessed without the proxy, the <code>rootUrl</code> can be used to provide a different Root URL.
                     </p>
+
+                </section>
+
+                <section>
+                    <h2>Add a Thing to a Proxy</h2>
+
+                    <p>
+                        Clients can add new Things to be proxied by a Web Thing (especially for gateways/cloud) using an HTTP <code>POST</code> request on the <a>Things URL</a> of a <code>Web Thing</code> and by sending in the request body the root resource representation of the Thing to be proxied.
+                    </p>
+                    <pre class="example" title="List of things proxied by a device">
+                    --&gt; REQUEST
+                    POST {wt}/things
+
+                    {
+                      "id":"p9qrnc89w48oh",
+                      "name":"Shopping Cart",
+                      "rootUrl":"https://192.168.0.6/",
+                      "description":"LAN-connected gateway to Lamp #4."
+                    }
+                                
+                    &lt;-- RESPONSE
+                    204 NO CONTENT
+                    Location: {wt}/things/p9qrnc89w48oh
+                    </pre>
                 </section>
             </section>
 
             <section>
-                <h2>Subscriptions</h2>
+                <h2><dfn>Subscriptions Resource</dfn></h2>
+                <p>All resources can be subscribed to but in particular, an <a>Extended Web Thing</a> SHOULD enable subscriptions to <a title="Action">Actions</a> and <a title="Property">Properties</a>. Subscriptions allows for a <a>Client</a> to be notified via a push event whenever the state of an observed resources changes.
 
-                <p>
-                    A <dfn>Subscription resource</dfn> allows to manage publication/subscription type of subscription to
-                    a
-                    given resource. Such a resource may be appended to any other resource exposed by an <a>Extended Web
-                    Thing</a>. In particular, an <a>Extended Web Thing</a> SHOULD enable subscriptions to <a
-                        title="Action">Actions</a>
-                    and <a title="Property">Properties</a>.
+                    <section>
+                    <h2>Create a subscription</h2>
+
+               An <a>Extended Web Thing</a> SHOULD support subscriptions via the WebSocket [[!RFC6455]] protocol and MAY support subscriptions via WebHooks (HTTP callbacks). Subscriptions are enabled via the HTTP protocol upgrade mechanism [[!RFC2616]] as shown below
                 </p>
+                <figure>
+                    <img src="subscriptions.png"
+                         alt="Clients can subscribe to resources via a protocol upgrade."
+                         width="600"/>
+                    <figcaption>Client subscription to a resource via a protocol upgrade, first via Websocket, second via a Webhook (HTTP callback).</figcaption>
+                </figure>
+
+                To subscribe to a resource the following HTTP headers should be provided via a GET request (e.g., on <code>/properties/temp</code>).
+                </p>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Header name</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><code>Upgrade</code></td>
+                        <td>The protocol that should be used for the subscription, one of
+                            <code>webhook</code> or <code>websocket</code>
+                            <br/><strong>This header is required.</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>Callback</code></td>
+                        <td>The callback URL to which updates should be pushed.
+                            <code>webhook</code> or <code>websocket</code>
+                            <br/><strong>This header is required in the case of a <code>webhook</code> subscription.</strong></td>
+                    </tr>
+                </table>
+               <p> In response to a HTTP <code>GET</code> request on the destination URL of a resource, an <a>Extended Web Thing</a> MUST either reject the request with an appropriate status code or MUST return a <code>101 Switching Protocol</code> response for a subscription via Websocket or a <code>200 OK</code> for a subscription via Webhook. In both cases the following headers must be returned (on top of the protocol specific headers):</p>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Header name</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><code>Subscription-ID</code></td>
+                        <td>The identifier of the subscription
+                        <br/><strong>This header is required.</strong></td>
+                    </tr>
+                </table>
+
+                <section>
+                    <h2>Subscription resource</h2>
+                <p>
+                    The <dfn>Subscription resource</dfn> allows to list current subscriptions to resources as well as cancelling a subscription. Such a resource is accessible via the root URL of the <a>Extended Web Thing</a></p>
 
                 <p>
-                    On top of <a href="#common-json-fields"></a>, the JSON representation used to describe a
-                    subscription
-                    includes the following fields:
+                    On top of <a href="#common-json-fields"></a>, the JSON representation used to describe a subscription includes the following fields:
                 </p>
                 <table>
                     <thead>
@@ -1941,20 +2023,15 @@
             [
               {
                 "id":"2349",
-                "type":"httpCallback",
+                "type":"webhook",
                 "resource":"/properties/temperature",
-                "customFields":{
-                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback" 
-                }
+                "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback"
               },
               {
                 "id":"2350",
                 "subscriberId":"ServiceObject-123213213",
-                "type":"websockets",
-                "resource":"/properties/location",      
-                "customFields":{
-                  "websocketUrl":"wss://www.compose-project.eu/WebObject-2423529879879875/streams/location"
-                }
+                "type":"websocket",
+                "resource":"/properties/location"
               }
             ]
             </pre>
@@ -1978,66 +2055,30 @@
             <pre class="example" title="Retrieve information about a specific subscription">
               {
                 "id":"2349",
-                "subscriberId":"ServiceObject-123213213",
-                "type":"httpCallback",
+                "type":"webhook",
                 "resource":"/properties/temperature",
-                "customFields":{
-                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback" 
-                }
+                "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback"
               }
             </pre>
                 </section>
 
                 <section>
-                    <h2>Create a subscription</h2>
+                    <h2>Delete a subscription</h2>
 
                     <p>
-                        In response to an HTTP <code>POST</code> request on the destination URL of a
-                        <code>subscriptions</code> link with a valid subscription description at request body, an <a>Extended
-                        Web Thing</a> MUST either reject the request with an appropriate status code or create the
-                        subscription and return available information about that subscription in a <code>201
-                        Created</code>
-                        HTTP response. The <code>Location</code> HTTP header identified the URL of the created
-                        subscription.
+                        In response to an HTTP <code>DELETE</code> request on the destination URL of a
+                        <code>subscriptions</code> an <a>Extended
+                        Web Thing</a> MUST either reject the request with an appropriate status code or remove (unsubscribe) the
+                        subscription and return a <code>200 OK</code> status code.
                     </p>
-
-                    <p class="issue" title="@tidoust">
-                        The mechanism by which a Web Thing is to "create the subscription" should be defined for HTTP
-                        and
-                        Websockets
-                    </p>
-            <pre class="example" title="Subscribe to a resource">
-              --&gt; REQUEST
-              POST {wt}/events/batteryLow/subscriptions
-              {
-                "subscriberId":"ServiceObject-123213213",
-                "type":"httpCallback",
-                "customFields":{
-                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback"
-                }
-              }
-
-              &lt;-- RESPONSE
-              201 CREATED
-              Location: {wt}/events/batteryLow/subscriptions/493
-              {
-                "id":"493",
-                "subscriberId":"ServiceObject-123213213",
-                "type":"httpCallback",
-                "createdAt":"2015-06-23T16:03:00.000Z",
-                "resource":"/events/batteryLow",
-                "customFields":{
-                  "callbackUrl":"http://www.compose-project.eu/so/ServiceObject-123213213/callback"
-                }
-              }
-            </pre>
                 </section>
             </section>
         </section>
     </section>
+    </section>
 
     <section class="appendix">
-        <h2>Examples</h2>
+        <h1>Examples</h1>
 
         <section>
             <h2>Extended Web Thing</h2>
@@ -2045,10 +2086,7 @@
             <p>Here is a possible representation of the root resource of an <a>Extended Web Thing</a>:</p>
         <pre class="example" title="Web Thing root resource">
           HTTP Link headers:
-          Link: &lt;product/&gt;; rel="product"
-          Link: &lt;system/&gt;; rel="system"
           Link: &lt;properties/&gt;; rel="properties"
-          Link: &lt;events/&gt;; rel="events"
           Link: &lt;actions/&gt;; rel="actions"
           Link: &lt;meta/&gt;; rel="meta"
           Link: &lt;help/&gt;; rel="help"
@@ -2062,48 +2100,14 @@
             "name":"Shopping Cart",
             "description":"Shopping Cart that updates its location as it moves",
             "tags":["cart","device","test"],
-            "customFields":{"size":"20","color":"blue"},
-            "links":{
-              "product": {
-                "link" : "http://api.evrythng.com/products/8838830wfoifj3jfo4i",
-                "title" : "Product this Web Thing is based on"
-              },
-              "system": {
-                "link": "system/",
-                "title": "Configurations of this Web Thing."      
-              },
-              "properties": {
-                "link": "properties/",
-                "title": "Properties of this Web Thing."
-              },
-              "actions": {
-                "link": "actions/",
-                "title": "Actions of this Web Thing."
-              },
-              "meta": {
-                "link": "http://w3c.org/schemas/webthing/",
-                "title": "Metadata"
-              },
-              "help": {
-                "link": "http://webofthings.org/docs/pi/",
-                "title": "Documentation"
-              },
-              "ui": {
-                "link": "ui/",
-                "title": "User Interface"
-              },
-              "http://webofthings.org/schemas/custom.html": {
-                "link": "custom/",
-                "title": "My custom resource"
-              }   
-            }
+            "customFields":{"size":"20","color":"blue"}
           }
         </pre>
         </section>
     </section>
 
     <section>
-        <h2>Acknowledgments</h2>
+        <h1>Acknowledgments</h1>
 
         <p>
             This work is supported by the European Union's 7th Research Framework Programme (FP7/2013-2015) under grant
