@@ -7,19 +7,6 @@
       "type": "string",
       "pattern": "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(%5C?([^#]*))?(#(.*))?"
     },
-    "wtcore": {
-      "anyOf": [ {
-              "id": {
-                "$ref": "#/definitions/rfc3986uri"
-              }},
-              {"name": {
-                              "type": "string"
-                            }},
-              {"description": {
-                              "type": "string"
-                            }}
-            ]
-    },
     "property": {
       "type": "object",
       "properties": {
@@ -44,10 +31,16 @@
     "customFields"
   ],
   "type": "object",
-  "additionalProperties": {
-    "$ref": "#/definitions/rfc3986uri"
-    },
   "properties": {
+    "id": {
+      "$ref": "#/definitions/rfc3986uri"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
     "createdAt": {
       "type": "string",
       "format": "date-time"
