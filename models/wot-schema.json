@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "title": "Web Thing Label Schema",
+  "definitions": {
+    "rfc3986uri": {
+      "description": "https://tools.ietf.org/html/rfc3986#page-50",
+      "type": "string",
+      "pattern": "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(%5C?([^#]*))?(#(.*))?"
+    },
+    "wtcore": {
+      "anyOf": [ {
+              "id": {
+                "$ref": "#/definitions/rfc3986uri"
+              }},
+              {"name": {
+                              "type": "string"
+                            }},
+              {"description": {
+                              "type": "string"
+                            }}
+            ]
+    },
+    "property": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/rfc3986uri"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "description",
+    "createdAt",
+    "tags",
+    "customFields"
+  ],
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "#/definitions/rfc3986uri"
+    },
+  "properties": {
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "customFields": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "properties": {
+      "type": "array",
+      "itmes": {
+        "type": {
+          "$ref": "#/definitions/property"
+        }
+      },
+      "uniqueItems": true
+    }
+  }
+}
