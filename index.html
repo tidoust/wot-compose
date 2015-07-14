@@ -606,13 +606,10 @@
             <td>A specific, executed instance of an action</td>
         </tr>
         <tr>
-            <td><code>{wt}/subscriptions/</code>
-            <td>Subscriptions to resources</td>
+            <td><code>{wt}/.../</code>
+            <td>...</td>
         </tr>
-        <tr>
-            <td><code>{wt}/subscriptions/{id}</code>
-            <td>A specific subscription</td>
-        </tr>
+        <!-- TODO Visualise tree structure -->
         </tbody>
     </table>
 
@@ -769,22 +766,31 @@
                 <td><a href="#model-resource">Model Resource</a></td>
             </tr>
             <tr>
+                <td><code>meta</code></td>
+                <td>A link to an external semantic extension for this Web Thing.</td>
+                <td>External Resource</td>
+            </tr>
+            <tr>
                 <td><code>product</code></td>
                 <td>A link to authoritative product information for this Web Thing.</td>
                 <td>External Resource</td>
             </tr>
             <tr>
-            <tr>
-                <td><code>meta</code></td>
-                <td>A link to an external semantic extension for this Web Thing.</td>
+                <td><code>ui</code></td>
+                <td>A link to the HTML-based user interface for this Web Thing.</td>
                 <td>External Resource</td>
             </tr>
-
+            <tr>
+                <td><code>help</code></td>
+                <td>A link to the online manual page for this Web Thing.</td>
+                <td>External Resource</td>
+            </tr>
             </tbody>
         </table>
 
         <p>
             An <a>Extended Web Thing</a> MAY use custom relation types using URLs as described in [[!RFC5988]].
+            As a convention, custom relation types names use a underscore <code>_</code> prefix.
         </p>
 
         <p>
@@ -797,6 +803,10 @@
           ...
           "links":{
             "&lt;relType&gt;":{
+              "link": "&lt;String&gt;",
+              "title": "&lt;String&gt;"
+            }
+            "&lt;_customRelType&gt;":{
               "link": "&lt;String&gt;",
               "title": "&lt;String&gt;"
             },
