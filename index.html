@@ -785,7 +785,7 @@
         </p>
 
         <p>
-            In addition to exposing them in the HTTP Header of earch resource, links SHOULD be exposed from the
+            In addition to exposing them in the HTTP Header of each resource, links SHOULD be exposed from the
             <a>Model</a> resource of a <a>Extended Web Thing</a> using the <code>links</code> field of the JSON payload.
             The keys of this object represent the relation type while each value describes the actual link as illustrated below.
         </p>
@@ -859,7 +859,7 @@
                 "schema": "http://webofthings.org/schemas/custom.html",
                 "title": "My custom resource"
               },
-              "..." : {"..." : {"..."}}
+              "_..." : {"..." : {"..."}}
           }
         </pre>
 
@@ -902,6 +902,11 @@
             </tr>
             </thead>
             <tbody>
+            <tr>
+                <td><code>&lt;valueName&gt;</code></td>
+                <td>String</td>
+                <td>The identifier of this value <br/><strong>This field is required</strong>.</td>
+            </tr>
             <tr>
                 <td><code>name</code></td>
                 <td>String</td>
