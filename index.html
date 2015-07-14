@@ -741,6 +741,11 @@
             </thead>
             <tbody>
             <tr>
+                <td><code>model</code></td>
+                <td>A link to a <a>Extended Web Thing</a> compliant description of a resource.</td>
+                <td><a href="#model-resource">Model Resource</a></td>
+            </tr>
+            <tr>
                 <td><code>properties</code></td>
                 <td>The properties of this resource.</td>
                 <td><a href="#properties-resource">Properties Resource</a></td>
@@ -761,11 +766,6 @@
                 <td><a href="#subscriptions-resource">Subscriptions Resource</a></td>
             </tr>
             <tr>
-                <td><code>model</code></td>
-                <td>A link to a <a>Extended Web Thing</a> compliant description of a resource.</td>
-                <td><a href="#model-resource">Model Resource</a></td>
-            </tr>
-            <tr>
                 <td><code>meta</code></td>
                 <td>A link to an external semantic extension for this Web Thing.</td>
                 <td>External Resource</td>
@@ -776,13 +776,13 @@
                 <td>External Resource</td>
             </tr>
             <tr>
-                <td><code>ui</code></td>
-                <td>A link to the HTML-based user interface for this Web Thing.</td>
+                <td><code>help</code></td>
+                <td>A link to the online manual page for this Web Thing.</td>
                 <td>External Resource</td>
             </tr>
             <tr>
-                <td><code>help</code></td>
-                <td>A link to the online manual page for this Web Thing.</td>
+                <td><code>ui</code></td>
+                <td>A link to the HTML-based user interface for this Web Thing.</td>
                 <td>External Resource</td>
             </tr>
             </tbody>
@@ -2114,6 +2114,7 @@
             <p>Here is a possible representation of the root resource of an <a>Extended Web Thing</a>:</p>
         <pre class="example" title="Web Thing root resource">
           HTTP Link headers:
+          Link: &lt;model/&gt;; rel="model"
           Link: &lt;properties/&gt;; rel="properties"
           Link: &lt;actions/&gt;; rel="actions"
           Link: &lt;meta/&gt;; rel="meta"
