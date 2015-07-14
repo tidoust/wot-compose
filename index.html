@@ -195,15 +195,15 @@
 
         <dt><dfn>Property</dfn>
         <dt>
-        <dd>A <a title="property">Property</a> is a variables of a Web Thing. Properties represent the internal state of a  <a>Web Thing</a>. Clients can
+        <dd>A <a title="property">Property</a> is a variable of a Web Thing. Properties represent the internal state of a  <a>Web Thing</a>. Clients can
             subscribe to properties to receive a notification message when specific conditions are met (e.g. value of
             one or more properties changed).
         </dd>
 
         <dt><dfn>Action</dfn></dt>
-        <dd><a title="action">Actions</a> Actions are functions offered by a <a>Web Thing</a>. A Client invokes a function on a <a>Web Thing</a> which initiates a state transition by sending it an Action. Examples of Actions are “open” or “close” for a garage door, “enable” or
-            “disable” for a smoke alarm, “check-in” or “scan” for a bottle of soda or a place. The direction of an <a>Action</a>
-            is from the <a>Client</a> to the <a>Web Thing</a>.
+        <dd>An <a title="action">Actions</a> is a function offered by a <a>Web Thing</a>. A Client invokes a function on a <a>Web Thing</a> which initiates a state transition by sending it an Action. Examples of Actions are “open” or “close” for a garage door; “enable” or
+            “disable” for a smoke alarm; “check-in” or “scan” for a bottle of soda or a place. The direction of an
+            <a>Action</a> is from the <a>Client</a> to the <a>Web Thing</a>.
         </dd>
 
         </dt>
@@ -469,6 +469,7 @@
                 If possible, every <a>Web Thing</a> SHOULD implement the <a href="#web-things-model">Web Things
                 Model</a>. It is not essential to use it for a device to be part of the Web of Things, but implementing
                 it will lead to higher degree of interoperability.
+
             </p>
 
             <p class="note">
@@ -567,11 +568,7 @@
     </p>
 
     <p>
-        An <a>Extended Web Thing</a> MUST create a URL endpoint for all the resources that it exposes (the <a>Web
-        Thing</a> itself, but also for <a title="Action">Actions</a> and <a title="Property">Properties</a>) and MUST
-        include that URL in the JSON representation whenever possible, using the <code>id</code> field. Relative URLs
-        are to be resolved against the URL of the resource that includes them. Implementers are encouraged to create a
-        logical tree structure for resources and to use relative URLs to keep JSON payloads short, for instance:
+        An <a>Extended Web Thing</a> MUST create a URL endpoint for all the resources that it exposes, including itself. By definition, the <code>model</code> link must always be exposed, even if the extended Web Thing does not expose any resources. The JSON representation of an extended Web Thing must contain the <code>id</code> field with its URL as value. An extended Relative URLs are to be resolved against the URL of the resource that includes them. Implementers are encouraged to create a logical tree structure for resources and to use relative URLs to keep JSON payloads short, for instance:
     </p>
     <table>
         <thead>
@@ -586,7 +583,7 @@
             <td>The root resource URL</td>
         </tr>
         <tr>
-            <td><code>{wt}/model</code>
+            <td><code>{wt}/model/</code>
             <td>The model of a Web Thing</td>
         </tr>
         <tr>
@@ -792,6 +789,11 @@
                 <td><code>ui</code></td>
                 <td>A link to the HTML-based user interface for this Web Thing.</td>
                 <td>External Resource</td>
+            </tr>
+            <tr>
+                <td><code>_&lt;customLink&gt;</code></td>
+                <td>A link to a custom resource.</td>
+                <td>Custom Resource</td>
             </tr>
             </tbody>
         </table>
