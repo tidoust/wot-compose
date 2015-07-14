@@ -494,7 +494,7 @@
             <p>
                 To interact with a <a>Web Thing</a>, a Client needs to know what resources are available on the Web
                 Thing, what they refer to (what is the type/nature of the resources), and how to interact with them. The
-                format of the API documentation is left to implementers, but should describe the resrouces offered, the
+                format of the API documentation is left to implementers, but should describe the resources offered, the
                 verbs they support, the payloads accepted and returned, and possible status codes that can be returned
                 and when.
             </p>
@@ -532,7 +532,7 @@
         </section>
 
         <section>
-            <h2>R2.4 – A <a>Web Thing</a> MAY offer an HTML interface/representation</h2>
+            <h2>R2.4 – A <a>Web Thing</a> MAY offer a HTML-based user interface</h2>
             <p>
                 A <a>Web Thing</a> MAY expose a  <abbr
                     title="User Interface">UI</abbr> in HTML, CSS and JavaScript. For example, the <abbr
@@ -682,18 +682,33 @@
             </tbody>
         </table>
         <pre class="example" title="Basic JSON payload">
-        {
-          "id":"myCar",
-          "name":"My great car",
-          "description":"This is such a great car.",
-          "createdAt":"2012-08-24T17:29:11.683Z", 
-          "updatedAt":"2012-08-24T17:29:11.683Z", 
-          "tags":["cart","device","test"],
-          "customFields":{
-              "size":"20",
-              "color":"blue"
-          }
-        }
+{
+  "id": "myCar",
+  "name": "My great car",
+  "description": "This is such a great car.",
+  "createdAt": "2012-08-24T17:29:11.683Z",
+  "updatedAt": "2012-08-24T17:29:11.683Z",
+  "tags": [
+    "cart",
+    "device",
+    "test"
+  ],
+  "customFields": {
+    "size": "20",
+    "color": "blue"
+  },
+  "links": {
+    "properties": {
+      "link": "properties/",
+      "title": "Properties of this Web Thing."
+    },
+    "actions": {
+      "link": "actions/",
+      "title": "Actions of this Web Thing."
+    }
+    ...
+  }
+}
         </pre>
         <p>
             The JSON response MAY contain additional fields, depending on the type of resource being considered, check
