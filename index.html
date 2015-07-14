@@ -586,6 +586,10 @@
             <td>The root resource URL</td>
         </tr>
         <tr>
+            <td><code>{wt}/model</code>
+            <td>The model of a Web Thing</td>
+        </tr>
+        <tr>
             <td><code>{wt}/properties/</code>
             <td>The list of properties</td>
         </tr>
@@ -695,6 +699,10 @@
     "color": "blue"
   },
   "links": {
+    "model": {
+      "link": "model/",
+      "title": "Model this Web Thing."
+    },
     "properties": {
       "link": "properties/",
       "title": "Properties of this Web Thing."
@@ -843,6 +851,10 @@
         </table>
         <pre class="example" title="Links Object JSON Example">
           {
+              "model": {
+                "link": "model/",
+                "title": "Model of this Web Thing."
+              },
               "properties": {
                 "link": "properties/",
                 "title": "Properties of this Web Thing."
@@ -881,6 +893,7 @@
         </p>
 
         <pre class="example" title="Links in the HTTP Header">
+            Link: &lt;model/&gt;; rel="model"
             Link: &lt;properties/&gt;; rel="properties"
             Link: &lt;actions/&gt;; rel="actions"
             Link: &lt;product/&gt;; rel="product"
@@ -1039,15 +1052,6 @@
                     <td><a>Thing Resource</a></td>
                 </tr>
                 <tr>
-                    <td><code>{wt}/subscriptions</code></td>
-                    <td>-</td>
-                    <td>D,G,C</td>
-                    <td>-</td>
-                    <td>D,G,C</td>
-                    <td>D,G,C</td>
-                    <td><a>Subscriptions Resource</a></td>
-                </tr>
-                <tr>
                     <td><code>{wt}/model</code></td>
                     <td>-</td>
                     <td>D,G,C</td>
@@ -1118,6 +1122,15 @@
                     <td>G,C</td>
                     <td>G,C</td>
                     <td><a>Things Resource</a></td>
+                </tr>
+                <tr>
+                    <td><code>{wt}/subscriptions</code></td>
+                    <td>-</td>
+                    <td>D,G,C</td>
+                    <td>-</td>
+                    <td>D,G,C</td>
+                    <td>D,G,C</td>
+                    <td><a>Subscriptions Resource</a></td>
                 </tr>
                 </tbody>
             </table>
