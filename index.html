@@ -734,7 +734,7 @@
             and a human-readable identifier for the relation (the "title"). <a
                 href="https://tools.ietf.org/html/rfc5988#section-6.2.2">Relation types</a> defined in [[!RFC5988]] may
             be used to characterize the relation with the sub-resource. Additionally, the Web Things model defines the
-            following aditionnal relation types:
+            following relation types:
         </p>
         <table>
             <thead>
@@ -771,19 +771,21 @@
                 <td><a href="#subscriptions-resource">Subscriptions Resource</a></td>
             </tr>
             <tr>
-                <td><code>meta</code></td>
-                <td>A link to an external semantic extension for this Web Thing.</td>
-                <td>External Resource</td>
+                <td><code>type</code></td>
+                <td>Can be used to indicate that the context
+                    resource is an instance of the resource identified by the target
+                    external URL.</td>
+                <td><a href="https://www.rfc-editor.org/rfc/rfc6903.txt"></a></td>
             </tr>
             <tr>
                 <td><code>product</code></td>
                 <td>A link to authoritative product information for this Web Thing.</td>
-                <td>External Resource</td>
+                <td><a href="https://schema.org/Product">Product</a></td>
             </tr>
             <tr>
                 <td><code>help</code></td>
                 <td>A link to the online manual page for this Web Thing.</td>
-                <td><a href="http://www.w3.org/TR/html5/links.html#link-type-help"></a> </td>
+                <td><a href="http://www.w3.org/TR/html5/links.html#link-type-help"></a></td>
             </tr>
             <tr>
                 <td><code>ui</code></td>
@@ -869,9 +871,9 @@
                 "link": "https://www.raspberrypi.org/products/raspberry-pi-2-model-b/",
                 "title": "Product this Web Thing is an instance of"
               },
-              "meta": {
+              "type": {
                 "link": "http://webofthings.org/schemas/web-thing/",
-                "title": "Metadata"
+                "title": "External information about the instance type of this Thing"
               },
               "help": {
                 "link": "http://webofthings.org/docs/pi/",
@@ -899,7 +901,7 @@
             Link: &lt;properties/&gt;; rel="properties"
             Link: &lt;actions/&gt;; rel="actions"
             Link: &lt;product/&gt;; rel="product"
-            Link: &lt;meta/&gt;; rel="meta"
+            Link: &lt;type/&gt;; rel="type"
             Link: &lt;help/&gt;; rel="help"
             Link: &lt;ui/&gt;; rel="ui"
         </pre>
@@ -1166,7 +1168,7 @@
             Link: &lt;properties/&gt;; rel="properties"
             Link: &lt;actions/&gt;; rel="actions"
             Link: &lt;product/&gt;; rel="product"
-            Link: &lt;meta/&gt;; rel="meta"
+            Link: &lt;type/&gt;; rel="type"
             Link: &lt;help/&gt;; rel="help"
             Link: &lt;ui/&gt;; rel="ui"
             Link: &lt;_myCustomLinkRelType/&gt;; rel="_myCustomLinkRelType"
@@ -1356,9 +1358,9 @@
         }
       }
     },
-    "meta": {
+    "type": {
       "link": "http://w3c.org/schemas/webthing/",
-      "title": "Metadata"
+      "title": "Instance type of the Pi"
     },
     "help": {
       "link": "http://webofthings.org/docs/pi/",
@@ -1420,7 +1422,7 @@
 
               &lt;-- RESPONSE
               200 OK
-              Link: &lt;http://webofthings.io/properties&gt;; rel="meta"
+              Link: &lt;http://webofthings.io/properties&gt;; rel="type"
 
               [
                 {
@@ -1624,7 +1626,7 @@
 
               &lt;-- RESPONSE
               200 OK
-              Link: &lt;http://webofthings.org/actions/upgradefirmware&gt;; rel="meta"
+              Link: &lt;http://webofthings.org/actions/upgradefirmware&gt;; rel="type"
 
               [
                 {
@@ -1675,7 +1677,7 @@
 
               &lt;-- RESPONSE
               200 OK
-              Link: &lt;http://webofthings.org/actions/upgradefirmware&gt;; rel="meta"
+              Link: &lt;http://webofthings.org/actions/upgradefirmware&gt;; rel="type"
               Link: &lt;model/&gt;; rel="model"
 
               [
