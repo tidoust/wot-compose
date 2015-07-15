@@ -1503,70 +1503,7 @@
             </pre>
                 </section>
 
-                <section>
-                    <h2>Retrieve the description of a specific property</h2>
 
-                    <p>
-                        In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code>
-                        link
-                        exposed by a <a>Property</a>, an <a>Extended Web Thing</a> MUST return the description of the
-                        <a>Property</a>.
-                        On top of <a href="#common-json-fields"></a>, the JSON representation used to describe a
-                        <a>Property</a> includes the following fields:
-                    </p>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Field name</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><code>values</code></td>
-                            <td>Object</td>
-                            <td>A description of the set of values that this resource contains.
-                                <br/>See <a href="#values"></a>.
-                                <br/><strong>This field is required.</strong></td>
-                        </tr>
-                        </tbody>
-                    </table>
-            <pre class="example" title="Property Model Example">
-              --&gt; REQUEST
-              GET {wt}/properties/acceleration/
-
-              &lt;-- RESPONSE
-              200 OK
-              Link: &lt;http://webofthings.org/properties/acceleration&gt;; rel="meta"
-
-              {
-                "id":"acceleration",
-                "name": "Acceleration",
-                "description": "A 3D acceleration sensor.",
-                "values":{
-                  "x":{
-                    "name":"Y-axis",
-                    "description":"The X dimension of the sensor",
-                    "unit":"meter per second squared"
-                  },
-                  "y":{
-                    "name":"Y-axis",
-                    "description":"The Y dimension of the sensor",
-                    "unit":"meter per second squared"
-                  },
-                  "z":{
-                    "name":"Z-axis",
-                    "description":"The Z dimension of the sensor",
-                    "unit":"meter per second squared"
-                  }
-                },
-                "tags":["sensor","public"]
-              }
-            </pre>
-
-
-                </section>
 
                 <section>
                     <h2>Update a specific property</h2>
@@ -1764,57 +1701,7 @@
             </pre>
                 </section>
 
-                <section>
-                    <h2>Retrieve the description of a specific action</h2>
 
-                    <p>
-                        In response to an HTTP <code>GET</code> request on the destination URL of a <code>model</code> link
-                        exposed by an <a>Action</a>, an <a>Extended Web Thing</a> MUST return the description of the <a>Action</a>.
-                        The JSON representation should be the same as the one returned for that <a>Action</a> in <a
-                            href="#retrieve-a-list-of-actions"></a>.
-                    </p>
-            <pre class="example" title="Retrieve the Model of an Action Type">
-                --&gt; REQUEST
-                GET {wt}/actions/upgradefirmware/model
-
-                &lt;-- RESPONSE
-                200 OK
-
-                {
-                    "id":"upgradeFirmware",
-                    "name":"Upgrade Device Firmware",  
-                    "description":"Loads a new firmware from the cloud and installs it.",
-                    "values": {
-                        "delay":{
-                            "name":"Upgrade Delay",
-                            "type":"integer",
-                            "required":true,
-                            "minValue":0,
-                            "maxValue":120,
-                            "unit":"seconds"
-                        },
-                        "url":{
-                            "name":"Firmware URL",
-                            "description":"The URL to get the firmware from (should contain the credentials).",
-                            "required":true,
-                            "type":"string"
-                        },
-                        "requester":{
-                            "name":"Request User ID",
-                            "description":"Your user ID (optional) ",
-                            "type":"string"
-                        }
-                    },
-                    "customFields":{
-                        "permission":"admin",
-                        "priority":"high"
-                    }   
-                }
-            </pre>
-                    <p>
-                        If allowed by the device, a <a>Client</a> can update the model of an <a>Action</a> by sending an HTTP <code>PUT</code> request to the same URL, with the new document as request body.
-                    </p>
-                </section>
 
                 <section>
                     <h2>Execute an action</h2>
