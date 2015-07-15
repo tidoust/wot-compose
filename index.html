@@ -717,7 +717,7 @@
         </p>
 
         <h3>Pagination</h3>
-        Requests that on things properties that store the history of value changes or on executed actions return many items will be paginated to 30 items by default. You can specify any further page to be returned using the ?page parameter. You can also set a custom page size up to 100 with the ?perPage parameter.
+        Requests that on things of a gateway, on properties that store the history of value changes or on executed actions return many items will be paginated to 30 items by default. You can specify any further page to be returned using the ?page parameter. You can also set a custom page size up to 100 with the ?perPage parameter.
 
 
         <code>GET {wt}/properties/acceleration?page=3&perPage=100</code>
@@ -731,8 +731,7 @@
             </pre>
         The <code>Result-Count</code> header contains the total number of results.
         The pagination info is included in the Link header.
-        <p class="note">
-        linebreak is included here for readability only, the actual sent header does not contain one.
+
 
         <table>
             <thead>
@@ -757,7 +756,7 @@
 
             </tbody>
         </table>
-        </p>
+
     </section>
 
 
@@ -1517,12 +1516,10 @@
 
                     <p class="note">
                         Some Web Things might not store the history of sensor readings but only the most recent value of a given property, in which case the array will always contain one object. However, Web Things on clouds and gateway are likely to store many past values of the property, in which case they can
-                        be retrieved using pagination and filters.
+                        be retrieved using pagination.
                     </p>
 
-                    <p class="issue" title="@vladounet">
-                        Describe how pagination and last/filtered contents would work.
-                    </p>
+
             <pre class="example" title="Retrieve the last measures of an accelerometer property">
               --&gt; REQUEST
               GET {wt}/properties/acceleration
