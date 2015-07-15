@@ -568,7 +568,7 @@
     </p>
 
     <p>
-        An <a>Extended Web Thing</a> MUST create a URL endpoint for all the resources that it exposes, including itself. By definition, the <code>model</code> link must always be exposed, even if the extended Web Thing does not expose any resources. The JSON representation of an extended Web Thing must contain the <code>id</code> field with its URL as value. An extended Relative URLs are to be resolved against the URL of the resource that includes them. Implementers are encouraged to create a logical tree structure for resources and to use relative URLs to keep JSON payloads short, for instance:
+        An <a>Extended Web Thing</a> MUST create a URL endpoint for all the resources that it exposes, including itself.  The JSON representation of an extended Web Thing must contain the <code>id</code>, field with its URL as value. Relative URLs are to be resolved against the URL of the resource that includes them. Implementers are encouraged to create a logical tree structure for resources and to use relative URLs to keep JSON payloads short, for instance:
     </p>
     <table>
         <thead>
@@ -1241,7 +1241,7 @@
 {
   "id": "pi",
   "name": "My WoT Raspberry PI",
-  "description": "A simple WoT-connected Raspberry PI for the WoT book.",
+  "description": "A simple WoT-connected Raspberry PI for the WoT Label.",
   "tags": [
     "raspberry",
     "pi",
