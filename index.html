@@ -716,6 +716,36 @@
             The JSON response MAY contain additional fields, depending on the type of resource being considered, check
             the <a href="#resources"></a> for details.
         </p>
+
+        <h3>Pagination</h3>
+        Requests that on properties that store the history of value changes or on executed actions return many items will be paginated to 30 items by default. You can specify any further page to be returned using the ?page parameter. You can also set a custom page size up to 100 with the ?perPage parameter.
+
+
+        <code>GET {wt}/properties/acceleration?page=3&perPage=100</code>
+        Extra pagination data is sent in response headers.
+
+        <pre class="example" title="Extra pagination data is sent in response headers">
+        Result-Count: 562
+        Link: &lt;https://api.evrythng.com//properties/acceleration?page=3&perPage=100&lt;; rel="next",
+        &lt;https://api.evrythng.com//properties/acceleration?page=56&perPage=100&lt;; rel="last"
+
+            </pre>
+        The <code>Result-Count</code> header contains the total number of results.
+        The pagination info is included in the Link header.
+        <p class="note">
+        linebreak is included here for readability only, the actual sent header does not contain one.
+
+        The possible rel values are:
+
+        next
+        The URL of the immediate next page of results.
+        last
+        The URL of the last page of results.
+        first
+        The URL of the first page of results.
+        prev
+        The URL of the immediate previous page of results.
+        </p>
     </section>
 
 
@@ -783,7 +813,7 @@
             <tr>
                 <td><code>help</code></td>
                 <td>A link to the online manual page for this Web Thing.</td>
-                <td><a href="http://www.w3.org/TR/html5/links.html#link-type-help"></a> </td>
+                <td><a href="http://www.w3.org/TR/html5/links.html#link-type-help">4.8.4.4 Link type "help"</a> </td>
             </tr>
             <tr>
                 <td><code>ui</code></td>
