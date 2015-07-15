@@ -1515,12 +1515,10 @@
 
                     <p class="note">
                         Some Web Things might not store the history of sensor readings but only the most recent value of a given property, in which case the array will always contain one object. However, Web Things on clouds and gateway are likely to store many past values of the property, in which case they can
-                        be retrieved using pagination and filters.
+                        be retrieved using pagination.
                     </p>
 
-                    <p class="issue" title="@vladounet">
-                        Describe how pagination and last/filtered contents would work.
-                    </p>
+
             <pre class="example" title="Retrieve the last measures of an accelerometer property">
               --&gt; REQUEST
               GET {wt}/properties/acceleration
