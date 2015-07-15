@@ -1381,6 +1381,10 @@
                         status code (e.g. because the <a>Client</a> is unauthenticated or because the <a>Model</a> is
                         read-only) or store the provided value(s) by updating the <a>Model</a>. Partial updates
                         are authorized and result in updating the fields that were provided in the request body.
+
+                    <p class="note">
+                        Usually, the model will be hardcoded in the device and generally cannot be altered by clients. If Web Things is hosted on a cloud service, the model can be updated by sending an HTTP <code>PUT</code> request to the same URL, with the new model document in the request body.
+                    </p>
                 </section>
             </section>
             <section>
@@ -1425,7 +1429,7 @@
                   "values":{
                     "temp":22,
                     "timestamp":"2015-06-14T14:30:00.000Z"
-                  }  
+                  }
                 },
                 {
                   "id":"status",
@@ -1433,7 +1437,7 @@
                   "values":{
                     "status":"OK",
                     "timestamp":"2015-06-14T14:30:00.000Z"
-                  }  
+                  }
                 },
                 {
                   "id":"acceleration",
@@ -1452,7 +1456,7 @@
                     "theta":2,
                     "rho":-0.1,
                     "timestamp":"2015-06-14T14:30:00.000Z"
-                  }  
+                  }
                 }
               ]
             </pre>
@@ -1560,9 +1564,7 @@
                 "tags":["sensor","public"]
               }
             </pre>
-                    <p class="note">
-                        Usually, the model will be hardcoded in the device and generally cannot be altered by clients. If Web Things is hosted on a cloud service, the model model of a <a>Property</a> can be updated by sending an HTTP <code>PUT</code> request to the same URL, with the new model document in the request body.
-                    </p>
+
 
                 </section>
 
@@ -1574,7 +1576,7 @@
                         values as
                         request body, an <a>Extended Web Thing</a> MUST either reject the request with the appropriate
                         status code (e.g. because the <a>Client</a> is unauthenticated or because the <a>Property</a> is
-                        read-only) or store the provided value(s) as new values for the <a>Property</a>. The body of the request SHOULD always be an array of values (at least one), which allows to send several property value updates within a single request. 
+                        read-only) or store the provided value(s) as new values for the <a>Property</a>. The body of the request SHOULD always be an array of values (at least one), which allows to send several property value updates within a single request.
                     </p>
             <pre class="example" title="Update the Values of the Temperature Property">
               --&gt; REQUEST
@@ -1593,7 +1595,7 @@
             </pre>
 
                     <p class="note">
-                        A <a>Property URL</a> is always a collection of resources, therefore its representation is an array of individual values with different timestamps. The individual values are not adressable individually, therefore the <code>Location:</code> header in response to a successful property update request SHOULD always be the <a>Property URL</a> itself. 
+                        A <a>Property URL</a> is always a collection of resources, therefore its representation is an array of individual values with different timestamps. The individual values are not adressable individually, therefore the <code>Location:</code> header in response to a successful property update request SHOULD always be the <a>Property URL</a> itself.
                     </p>
 
                 </section>
@@ -2128,35 +2130,7 @@
     </section>
     <!--</section>-->
 
-    <section class="appendix">
-        <h1>Examples</h1>
 
-        <section>
-            <h2>Extended Web Thing</h2>
-
-            <p>Here is a possible representation of the root resource of an <a>Extended Web Thing</a>:</p>
-        <pre class="example" title="Web Thing root resource">
-          HTTP Link headers:
-          Link: &lt;model/&gt;; rel="model"
-          Link: &lt;properties/&gt;; rel="properties"
-          Link: &lt;actions/&gt;; rel="actions"
-          Link: &lt;meta/&gt;; rel="meta"
-          Link: &lt;help/&gt;; rel="help"
-          Link: &lt;ui/&gt;; rel="ui"
-
-          JSON response:
-          {
-            "id":"cart1",
-            "createdAt":"2012-08-24T17:29:11.683Z", 
-            "updatedAt":"2012-08-24T17:29:11.683Z", 
-            "name":"Shopping Cart",
-            "description":"Shopping Cart that updates its location as it moves",
-            "tags":["cart","device","test"],
-            "customFields":{"size":"20","color":"blue"}
-          }
-        </pre>
-        </section>
-    </section>
 
     <section>
         <h1>Acknowledgments</h1>
