@@ -159,24 +159,21 @@
     </p>
     <dl>
         <dt><dfn>Web Thing</dfn></dt>
-        <dd>A Web Thing is a digital representation of a physical object accessible via a RESTful Web API. Examples of
+        <dd>
+            A Web Thing is a digital representation of a physical object accessible via a RESTful Web API. Examples of
             Web Things are: an Arduino board, a garage door, a bottle of soda, a building, a TV, etc. The API of the Web
             Thing can be hosted on the Thing itself or on an intermediate host in the network such as a Gateway or a
             Cloud service (for Things that aren't accessible through the Internet).
+            <p>A <a>Web Thing</a> conforms to this specification if it follows the statements defined in <a href="#web-things-requirements"></a>.</p>
         </dd>
-        <p>
-            A <a>Web Thing</a> conforms to this specification if it follows the statements defined in <a
-                href="#web-things-requirements"></a>.
-        </p>
         <dt><dfn>Extended Web Thing</dfn></dt>
-        <dd>A <a>Extended Web Thing</a> that also supports the REST API and data model defined in this specification,
+        <dd>
+            An <a>Extended Web Thing</a> that also supports the REST API and data model defined in this specification,
             thus enabling its automatic inclusion in more complex systems.
+            <p>An <a>Extended Web Thing</a> conforms to this specification if it follows the statements defined in <a
+            href="#web-things-requirements"></a> and <a href="#web-things-model"></a>.</p>
         </dd>
     </dl>
-    <p>
-        An <a>Extended Web Thing</a> conforms to this specification if it follows the statements defined in <a
-            href="#web-things-requirements"></a> and <a href="#web-things-model"></a>.
-    </p>
 </section>
 
 <section>
@@ -200,13 +197,11 @@
         </dd>
 
         <dt><dfn>Action</dfn></dt>
-        <dd>An <a title="action">Actions</a> is a function offered by a <a>Web Thing</a>. A Client invokes a function on a <a>Web Thing</a> which initiates a state transition by sending it an Action. Examples of Actions are “open” or “close” for a garage door; “enable” or
+        <dd>An <a>Action</a> is a function offered by a <a>Web Thing</a>. A Client invokes a function on a <a>Web Thing</a> which initiates a state transition by sending it an Action. Examples of Actions are “open” or “close” for a garage door; “enable” or
             “disable” for a smoke alarm; “check-in” or “scan” for a bottle of soda or a place. The direction of an
             <a>Action</a> is from the <a>Client</a> to the <a>Web Thing</a>.
         </dd>
-
-        </dt>
-        </dl>
+    </dl>
 </section>
 
 <section>
@@ -268,7 +263,7 @@
         <h2><dfn>Cloud</dfn> proxied connectivity</h2>
 
         <p>
-            This third case is similar to <a href="#gateway-based-connectivity"></a>. However, in this case the gateway
+            This third case is similar to <a href="#gateway-proxied-connectivity"></a>. However, in this case the gateway
             is a cloud service and not another device in situ.
         </p>
         <figure>
@@ -720,13 +715,13 @@
         Requests that on things of a gateway, on properties that store the history of value changes or on executed actions return many items will be paginated to 30 items by default. You can specify any further page to be returned using the ?page parameter. You can also set a custom page size up to 100 with the ?perPage parameter.
 
 
-        <code>GET {wt}/properties/acceleration?page=3&perPage=100</code>
+        <code>GET {wt}/properties/acceleration?page=3&amp;perPage=100</code>
         Extra pagination data is sent in response headers.
 
         <pre class="example" title="Extra pagination data is sent in response headers">
         Result-Count: 562
-        Link: &lt;http://webofthings.io/properties/acceleration?page=3&perPage=100&lt;; rel="next",
-        &lt;http://webofthings.io/properties/acceleration?page=56&perPage=100&lt;; rel="last"
+        Link: &lt;http://webofthings.io/properties/acceleration?page=3&amp;perPage=100&lt;; rel="next",
+        &lt;http://webofthings.io/properties/acceleration?page=56&amp;perPage=100&lt;; rel="last"
 
             </pre>
         The <code>Result-Count</code> header contains the total number of results.
@@ -1191,7 +1186,7 @@
 
             <p>
                 The <dfn>Thing URL</dfn> is either the root URL of the API or, in the case of a proxy for other Things,
-                the result of resolving the <code>id</code> returned in the representation of the <a>Things</a>
+                the result of resolving the <code>id</code> returned in the representation of the <a title="Thing">Things</a>
                 resource.
             </p>
             <section>
@@ -1251,13 +1246,14 @@
             204 NO CONTENT
             </pre>
             </section>
+        </section>
             <section>
                 <h2><dfn>Model Resource</dfn></h2>
 
                 <p>
-                    A <a>Model</a> describes the values of <code>properties</code> and <code>actions</code> that can
+                    A <dfn>Model</dfn> describes the values of <code>properties</code> and <code>actions</code> that can
                     be
-                    performed on <a>Things</a>.
+                    performed on <a title="Thing">Things</a>.
                 </p>
 
                 <p>
@@ -1622,7 +1618,7 @@
                 <h2><dfn>Actions Resource</dfn></h2>
 
                 <p>
-                    On top of <a href="#common-json-fields"></a>, the JSON representation used to describe an
+                    On top of <a href="#common-constructs"></a>, the JSON representation used to describe an
                     <a>Action</a>
                     includes the following fields:
                 </p>
@@ -1690,7 +1686,7 @@
                     </p>
 
                     <p>
-                        On top of <a href="#common-json-fields"></a>, the JSON representation used to describe the
+                        On top of <a href="#common-constructs"></a>, the JSON representation used to describe the
                         execution
                         of an <a>Action</a> includes the following fields:
                     </p>
@@ -1816,7 +1812,7 @@
                 <p>
                     A <a>Web Thing</a> may proxy other <a title="Web Thing">Web Things</a> via the Things resource. For instance, it is expected
                     that gateways and cloud services will proxy a number of third party devices. On top of <a
-                        href="#common-json-fields"></a>, the JSON representation used to describe a link to another
+                        href="#common-constructs"></a>, the JSON representation used to describe a link to another
                     thing
                     includes the following fields:
                 </p>
@@ -1881,7 +1877,7 @@
                     <h2>Add a Thing to a Gateway</h2>
 
                     <p>
-                        Clients can add new Things to be proxied by a Web Thing (especially for gateways/cloud) using an HTTP <code>POST</code> request on the <a>Things URL</a> of a <code>Web Thing</code> and by sending in the request body the root resource representation of the Thing to be proxied.
+                        Clients can add new Things to be proxied by a Web Thing (especially for gateways/cloud) using an HTTP <code>POST</code> request on the <a>Thing URL</a> of a <code>Web Thing</code> and by sending in the request body the root resource representation of the Thing to be proxied.
                     </p>
                     <pre class="example" title="List of things proxied by a device">
                     --&gt; REQUEST
@@ -1903,12 +1899,12 @@
 
             <section>
                 <h2><dfn>Subscriptions Resource</dfn></h2>
-                <p>All resources can be subscribed to but in particular, an <a>Extended Web Thing</a> SHOULD enable subscriptions to <a title="Action">Actions</a> and <a title="Property">Properties</a>. Subscriptions allows for a <a>Client</a> to be notified via a push event whenever the state of an observed resources changes.
+                <p>All resources can be subscribed to but in particular, an <a>Extended Web Thing</a> SHOULD enable subscriptions to <a title="Action">Actions</a> and <a title="Property">Properties</a>. Subscriptions allows for a <a>Client</a> to be notified via a push event whenever the state of an observed resources changes.</p>
 
-                    <!--<section>-->
+                <section>
                     <h2>Create a subscription</h2>
 
-               An <a>Extended Web Thing</a> SHOULD support subscriptions via the WebSocket [[!RFC6455]] protocol and MAY support subscriptions via WebHooks (HTTP callbacks). Subscriptions are enabled via the HTTP protocol upgrade mechanism [[!RFC2616]] as shown below
+               <p>An <a>Extended Web Thing</a> SHOULD support subscriptions via the WebSocket [[!RFC6455]] protocol and MAY support subscriptions via WebHooks (HTTP callbacks). Subscriptions are enabled via the HTTP protocol upgrade mechanism [[!RFC2616]] as shown below
                 </p>
                 <figure>
                     <img src="subscriptions.png"
@@ -1917,8 +1913,7 @@
                     <figcaption>Client subscription to a resource via a protocol upgrade, first via Websocket, second via a Webhook (HTTP callback).</figcaption>
                 </figure>
 
-                To subscribe to a resource the following HTTP headers should be provided via a GET request (e.g., on <code>/properties/temp</code>).
-                </p>
+                <p>To subscribe to a resource the following HTTP headers should be provided via a GET request (e.g., on <code>/properties/temp</code>).</p> 
                 <table>
                     <thead>
                     <tr>
@@ -1939,6 +1934,7 @@
                             <code>webhook</code> or <code>websocket</code>
                             <br/><strong>This header is required in the case of a <code>webhook</code> subscription.</strong></td>
                     </tr>
+                    </tbody>
                 </table>
                <p> In response to a HTTP <code>GET</code> request on the destination URL of a resource, an <a>Extended Web Thing</a> MUST either reject the request with an appropriate status code or MUST return a <code>101 Switching Protocol</code> response for a subscription via Websocket or a <code>200 OK</code> for a subscription via Webhook. In both cases the following headers must be returned (on top of the protocol specific headers):</p>
                 <table>
@@ -1954,7 +1950,9 @@
                         <td>The identifier of the subscription
                         <br/><strong>This header is required.</strong></td>
                     </tr>
+                    </tbody>
                 </table>
+                </section>
 
                 <section>
                     <h2>Subscription resource</h2>
@@ -1962,7 +1960,7 @@
                     The <dfn>Subscription resource</dfn> allows to list current subscriptions to resources as well as cancelling a subscription. Such a resource is accessible via the root URL of the <a>Extended Web Thing</a></p>
 
                 <p>
-                    On top of <a href="#common-json-fields"></a>, the JSON representation used to describe a subscription includes the following fields:
+                    On top of <a href="#common-constructs"></a>, the JSON representation used to describe a subscription includes the following fields:
                 </p>
                 <table>
                     <thead>
