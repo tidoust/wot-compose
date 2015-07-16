@@ -1901,10 +1901,46 @@
                 <h2><dfn>Subscriptions Resource</dfn></h2>
                 <p>All resources can be subscribed to but in particular, an <a>Extended Web Thing</a> SHOULD enable subscriptions to <a title="Action">Actions</a> and <a title="Property">Properties</a>. Subscriptions allows for a <a>Client</a> to be notified via a push event whenever the state of an observed resources changes.</p>
 
+                <p>
+                    The <dfn>Subscription resource</dfn> allows to list current subscriptions to resources as well as cancelling a subscription. Such a resource is accessible via the root URL of the <a>Extended Web Thing</a>.</p>
+
+                <p>
+                    On top of <a href="#common-constructs"></a>, the JSON representation used to describe a subscription includes the following fields:
+                </p>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Field name</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><code>subscriberId</code></td>
+                        <td>String</td>
+                        <td>A unique identifier for the subscriber
+                            <br/><strong>This field is required.</strong></td>
+                    </tr>
+                    <tr>
+                        <td><code>type</code></td>
+                        <td>String</td>
+                        <td>The type of connection used to exchange updates with the subscriber. One of
+                            <code>httpCallback</code> or <code>websockets</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>resource</code></td>
+                        <td>String</td>
+                        <td>The URL of the resource whose changes the subscriber is subscribed to.</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
                 <section>
                     <h2>Create a subscription</h2>
 
-               <p>An <a>Extended Web Thing</a> SHOULD support subscriptions via the WebSocket [[!RFC6455]] protocol and MAY support subscriptions via WebHooks (HTTP callbacks). Subscriptions are enabled via the HTTP protocol upgrade mechanism [[!RFC2616]] as shown below
+               <p>An <a>Extended Web Thing</a> SHOULD support subscriptions via the WebSocket [[!RFC6455]] protocol and MAY support subscriptions via WebHooks (HTTP callbacks). Subscriptions are enabled via the HTTP protocol upgrade mechanism [[!RFC2616]] as shown below.
                 </p>
                 <figure>
                     <img src="subscriptions.png"
@@ -1953,43 +1989,6 @@
                     </tbody>
                 </table>
                 </section>
-
-                <section>
-                    <h2>Subscription resource</h2>
-                <p>
-                    The <dfn>Subscription resource</dfn> allows to list current subscriptions to resources as well as cancelling a subscription. Such a resource is accessible via the root URL of the <a>Extended Web Thing</a></p>
-
-                <p>
-                    On top of <a href="#common-constructs"></a>, the JSON representation used to describe a subscription includes the following fields:
-                </p>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Field name</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><code>subscriberId</code></td>
-                        <td>String</td>
-                        <td>A unique identifier for the subscriber
-                            <br/><strong>This field is required.</strong></td>
-                    </tr>
-                    <tr>
-                        <td><code>type</code></td>
-                        <td>String</td>
-                        <td>The type of connection used to exchange updates with the subscriber. One of
-                            <code>httpCallback</code> or <code>websockets</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>resource</code></td>
-                        <td>String</td>
-                        <td>The URL of the resource whose changes the subscriber is subscribed to.</td>
-                    </tr>
-                    </tbody>
-                </table>
 
                 <section>
                     <h2>Retrieve a list of subscriptions</h2>
@@ -2055,7 +2054,6 @@
             </section>
         </section>
     </section>
-    <!--</section>-->
 
 
 
