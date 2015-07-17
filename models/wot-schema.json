@@ -7,6 +7,63 @@
       "type": "string",
       "pattern": "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(%5C?([^#]*))?(#(.*))?"
     },
+    "valueDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A human-readable caption for this value"
+        },
+        "description": {
+          "type": "string",
+          "description": "A human-readable description of this value"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["integer", "float", "boolean", "string"],
+          "description": "The type of this value. The supported types are integer, float, boolean, string"
+        },
+        "unit": {
+          "type": "string",
+          "description": "The unit of this value, using one of the full names defined in the International System of Units. Example: \"meter per second squared\""
+        },
+        "required": {
+          "type": "boolean",
+          "default": "true",
+          "description": "Specifies whether this value is required or optional. If omitted, the default is true."
+        },
+        "minValue": {
+          "type": "number",
+          "description": "The minimal concrete value that this value can take"
+        },
+        "maxValue": {
+          "type": "number",
+          "description": "The maximal concrete value of this value"
+        },
+        "enum": {
+          "type": "object",
+          "patternProperties": {
+            "$[A-Z]*^": {"type": "string"}
+          },
+          "additionalProperties": false,
+          "description": "Specifies a set of concrete values that this value can take, e.g. {\"LOCK\":\"Locks the door.\", \"UNLOCK\":\"unlocks the door.\"}"
+        }
+      },
+      "additionalProperties": false
+    },
+    "link": {
+      "type": "object",
+      "properties": {
+        "link": {
+          "$ref": "#/definitions/rfc3986uri"
+
+        },
+        "title": {
+          "description": "A concise description of the link",
+          "type": "string"
+        }
+      }
+    },
     "property": {
       "type": "object",
       "properties": {
@@ -62,14 +119,31 @@
         "type": "string"
       }
     },
-    "properties": {
-      "type": "array",
-      "itmes": {
+    "links": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "$ref": "#/definitions/link"
+        },
+        "properties": {
+          "$ref": "#/definitions/link"
+        },
+        "actions": {
+          "$ref": "#/definitions/link"
+        },
+        "product": {
+          "$ref": "#/definitions/link"
+        },
         "type": {
-          "$ref": "#/definitions/property"
+          "$ref": "#/definitions/link"
+        },
+        "help": {
+          "$ref": "#/definitions/link"
+        },
+        "ui": {
+          "$ref": "#/definitions/link"
         }
-      },
-      "uniqueItems": true
+      }
     }
   }
 }
