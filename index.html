@@ -1936,11 +1936,10 @@
                     <tr>
                         <td><code>Callback</code></td>
                         <td>The callback URL to which updates should be pushed.
-                            <code>webhook</code> or <code>websocket</code>
-                            <br/><strong>This header is required in the case of a <code>webhook</code> subscription.</strong></td>
+                            <br/><strong>This header is required only in the case of a <code>webhook</code> subscription.</strong></td>
                     </tr>
                 </table>
-               <p> In response to a HTTP <code>GET</code> request on the destination URL of a resource, an <a>Extended Web Thing</a> MUST either reject the request with an appropriate status code or MUST return a <code>101 Switching Protocol</code> response for a subscription via Websocket or a <code>200 OK</code> for a subscription via Webhook. In both cases the following headers must be returned (on top of the protocol specific headers):</p>
+               <p> In response to an HTTP <code>GET</code> request on the destination URL of a resource, an <a>Extended Web Thing</a> MUST either reject the request with an appropriate status code or MUST return a <code>101 Switching Protocol</code> response for a subscription via Websocket or a <code>200 OK</code> for a subscription via Webhook. In both cases the following headers must be returned (on top of the protocol specific headers):</p>
                 <table>
                     <thead>
                     <tr>
@@ -1951,7 +1950,7 @@
                     <tbody>
                     <tr>
                         <td><code>Subscription-ID</code></td>
-                        <td>The identifier of the subscription
+                        <td>The identifier of the subscription to be used with the <a>Subscription resource</a>.
                         <br/><strong>This header is required.</strong></td>
                     </tr>
                 </table>
@@ -1959,7 +1958,7 @@
                 <section>
                     <h2>Subscription resource</h2>
                 <p>
-                    The <dfn>Subscription resource</dfn> allows to list current subscriptions to resources as well as cancelling a subscription. Such a resource is accessible via the root URL of the <a>Extended Web Thing</a></p>
+                    The SHOULD <dfn>Subscription resource</dfn> should be implemented by Web Things to allow listing current subscriptions to resources as well as cancelling a subscription. Such a resource is accessible via the root URL of the <a>Extended Web Thing</a>. The active subscriptions are populated by the Web Thing as a result of a successful subscription (see <a>Subscriptions Resource</a>).</p>
 
                 <p>
                     On top of <a href="#common-json-fields"></a>, the JSON representation used to describe a subscription includes the following fields:
