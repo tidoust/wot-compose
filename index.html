@@ -1405,7 +1405,7 @@
       "title": "Documentation"
     },
     "ui": {
-      "link": "ui/",
+      "link": "/ui",
       "title": "User Interface"
     }
   }
@@ -1972,7 +1972,7 @@
                     </tr>
                     </tbody>
                 </table>
-               <p> In response to a HTTP <code>GET</code> request on the destination URL of a resource, an <a>Extended Web Thing</a> MUST either reject the request with an appropriate status code or MUST return a <code>101 Switching Protocol</code> response for a subscription via Websocket or a <code>200 OK</code> for a subscription via Webhook. In both cases the following headers must be returned (on top of the protocol specific headers):</p>
+               <p> In response to a HTTP <code>GET</code> request on the destination URL of a resource, an <a>Extended Web Thing</a> MUST either reject the request with an appropriate status code or MUST return a <code>101 Switching Protocol</code> response for a subscription via Websocket or a <code>200 OK</code> for a subscription via Webhook. It SHOULD then create a record for the subscription that can be retrieved via the <code>/subscriptions</code> URL. For both Websockets and Webhooks subscriptions the following headers must be returned (on top of the protocol specific headers):</p>
                 <table>
                     <thead>
                     <tr>
