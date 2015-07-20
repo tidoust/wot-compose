@@ -19,6 +19,7 @@
           "description": "A human-readable description of this value"
         },
         "type": {
+          "type": "string",
           "enum": [
             "integer",
             "float",
@@ -46,13 +47,7 @@
         },
         "enum": {
           "type": "object",
-          "patternProperties": {
-            "$[A-Z]*^": {
-              "type": "string"
-            }
-          },
-          "description": "Specifies a set of concrete values that this value can take, e.g. {\"LOCK\":\"Locks the door.\", \"UNLOCK\":\"unlocks the door.\"}",
-          "additionalProperties": false
+          "description": "Specifies a set of concrete values that this value can take, e.g. {\"LOCK\":\"Locks the door.\", \"UNLOCK\":\"unlocks the door.\"}"
         },
         "customFields": {
           "type": "object"
