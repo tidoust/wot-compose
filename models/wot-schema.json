@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Web Thing Label Schema",
   "definitions": {
     "rfc3986uri": {
@@ -19,8 +19,12 @@
           "description": "A human-readable description of this value"
         },
         "type": {
-          "type": "string",
-          "enum": ["integer", "float", "boolean", "string"],
+          "enum": [
+            "integer",
+            "float",
+            "boolean",
+            "string"
+          ],
           "description": "The type of this value. The supported types are integer, float, boolean, string"
         },
         "unit": {
@@ -29,7 +33,7 @@
         },
         "required": {
           "type": "boolean",
-          "default": "true",
+          "default": true,
           "description": "Specifies whether this value is required or optional. If omitted, the default is true."
         },
         "minValue": {
@@ -43,10 +47,15 @@
         "enum": {
           "type": "object",
           "patternProperties": {
-            "$[A-Z]*^": {"type": "string"}
+            "$[A-Z]*^": {
+              "type": "string"
+            }
           },
-          "additionalProperties": false,
-          "description": "Specifies a set of concrete values that this value can take, e.g. {\"LOCK\":\"Locks the door.\", \"UNLOCK\":\"unlocks the door.\"}"
+          "description": "Specifies a set of concrete values that this value can take, e.g. {\"LOCK\":\"Locks the door.\", \"UNLOCK\":\"unlocks the door.\"}",
+          "additionalProperties": false
+        },
+        "customFields": {
+          "type": "object"
         }
       },
       "additionalProperties": false
@@ -56,37 +65,14 @@
       "properties": {
         "link": {
           "$ref": "#/definitions/rfc3986uri"
-
         },
         "title": {
           "description": "A concise description of the link",
           "type": "string"
         }
       }
-    },
-    "property": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/rfc3986uri"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        }
-      }
     }
   },
-  "required": [
-    "id",
-    "name",
-    "description",
-    "createdAt",
-    "tags",
-    "customFields"
-  ],
   "type": "object",
   "properties": {
     "id": {
@@ -114,10 +100,7 @@
       "uniqueItems": true
     },
     "customFields": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
+      "type": "object"
     },
     "links": {
       "type": "object",
@@ -126,10 +109,80 @@
           "$ref": "#/definitions/link"
         },
         "properties": {
-          "$ref": "#/definitions/link"
+          "allOf": [
+            {
+              "$ref": "#/definitions/link"
+            },
+            {
+              "properties": {
+                "resources": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^.+$": {
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "values": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^.+$": {
+                              "allOf": [
+                                {
+                                  "properties": {
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                {
+                                  "$ref": "#/definitions/valueDefinition"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
         },
         "actions": {
-          "$ref": "#/definitions/link"
+          "allOf": [
+            {
+              "$ref": "#/definitions/link"
+            },
+            {
+              "properties": {
+                "resources": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^.+$": {
+                      "type": "object",
+                      "properties": {
+                        "values": {
+                          "type": "object",
+                          "patternProperty": {
+                            "^.+$":{"$ref": "#/definitions/valueDefinition"}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
         },
         "product": {
           "$ref": "#/definitions/link"
