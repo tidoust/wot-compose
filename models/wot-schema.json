@@ -113,7 +113,7 @@
                 "resources": {
                   "type": "object",
                   "patternProperties": {
-                    "^.+$": {
+                    "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(%5C?([^#]*))?(#(.*))?": {
                       "properties": {
                         "name": {
                           "type": "string"
@@ -162,7 +162,7 @@
                 "resources": {
                   "type": "object",
                   "patternProperties": {
-                    "^.+$": {
+                    "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(%5C?([^#]*))?(#(.*))?": {
                       "type": "object",
                       "properties": {
                         "values": {
