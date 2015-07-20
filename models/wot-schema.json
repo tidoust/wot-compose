@@ -8,6 +8,7 @@
       "pattern": "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(%5C?([^#]*))?(#(.*))?"
     },
     "valueDefinition": {
+      "description": "Several resources support values (particularly Actions and Properties). A values object contains the description of a set of values identified by their name. The description includes the value type, unit, and possible concrete values that the value can take. A values object is typically used to define the parameters a Client can use when it issues an Action or accesses the channels of a Property.",
       "type": "object",
       "properties": {
         "name": {
@@ -104,6 +105,7 @@
           "$ref": "#/definitions/link"
         },
         "properties": {
+          "description": "A Property keeps track of a set of variables about a device (its location, the temperature sensor reading, etc.). The Property URL is the result of resolving the id returned in the representation of a Property against the destination URL of the properties link that gave birth to it.",
           "allOf": [
             {
               "$ref": "#/definitions/link"
@@ -113,7 +115,7 @@
                 "resources": {
                   "type": "object",
                   "patternProperties": {
-                    "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(%5C?([^#]*))?(#(.*))?": {
+                    "^.+$": {
                       "properties": {
                         "name": {
                           "type": "string"
@@ -153,6 +155,7 @@
           ]
         },
         "actions": {
+          "description": "The Action URL is the result of resolving the id returned in an Action description against the destination URL of the actions link that gave birth to it. In response to an HTTP GET request on the destination URL of an actions link exposed by a resource, an Extended Web Thing must return an array of Action descriptions that the initial resource may achieve.",
           "allOf": [
             {
               "$ref": "#/definitions/link"
@@ -162,7 +165,7 @@
                 "resources": {
                   "type": "object",
                   "patternProperties": {
-                    "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(%5C?([^#]*))?(#(.*))?": {
+                    "^.+$": {
                       "type": "object",
                       "properties": {
                         "values": {
