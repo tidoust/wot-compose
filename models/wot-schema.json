@@ -8,7 +8,7 @@
       "pattern": "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(%5C?([^#]*))?(#(.*))?"
     },
     "valueDefinition": {
-      "description": "Several resources support values (particularly Actions and Properties). A values object contains the description of a set of values identified by their name. The description includes the value type, unit, and possible concrete values that the value can take. A values object is typically used to define the parameters a Client can use when it issues an Action or accesses the channels of a Property.",
+      "description": "Several resources support values (particularly Actions and Properties). A values object contains the description of a set of values identified by their name. The description includes the value type, unit, and possible concrete values that the value can take. A values object is typically used to define the parameters a Client can use when it issues an Action or accesses the channels of a Property",
       "type": "object",
       "properties": {
         "name": {
