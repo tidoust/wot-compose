@@ -53,8 +53,7 @@
         "customFields": {
           "type": "object"
         }
-      },
-      "additionalProperties": false
+      }, "additionalProperties": false
     },
     "link": {
       "type": "object",
@@ -106,73 +105,78 @@
         },
         "properties": {
           "description": "A Property keeps track of a set of variables about a device (its location, the temperature sensor reading, etc.). The Property URL is the result of resolving the id returned in the representation of a Property against the destination URL of the properties link that gave birth to it.",
-          "allOf": [
-            {
-              "$ref": "#/definitions/link"
+          "type": "object",
+          "properties": {
+            "link": {
+              "$ref": "#/definitions/rfc3986uri"
             },
-            {
-              "properties": {
-                "resources": {
-                  "type": "object",
-                  "patternProperties": {
-                    "^.+$": {
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        },
-                        "description": {
-                          "type": "string"
-                        },
-                        "values": {
-                          "type": "object",
-                          "patternProperties": {
-                            "^.+$": {
-                              "allOf": [
-                                {
-                                  "properties": {
-                                    "name": {
-                                      "type": "string"
-                                    },
-                                    "description": {
-                                      "type": "string"
-                                    }
-                                  }
+            "title": {
+              "description": "A concise description of the link",
+              "type": "string"
+            },
+            "resources": {
+              "type": "object",
+              "patternProperties": {
+                "^.+$": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "values": {
+                      "type": "object",
+                      "patternProperties": {
+                        "^.+$": {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "name": {
+                                  "type": "string"
                                 },
-                                {
-                                  "$ref": "#/definitions/valueDefinition"
+                                "description": {
+                                  "type": "string"
                                 }
-                              ]
+                              }
+                            },
+                            {
+                              "$ref": "#/definitions/valueDefinition"
                             }
-                          }
+                          ]
                         }
-                      }
+                      },"additionalProperties": false
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 }
-              }
+              },
+              "additionalProperties": false
             }
-          ]
+          },
+          "additionalProperties": false
         },
         "actions": {
           "description": "The Action URL is the result of resolving the id returned in an Action description against the destination URL of the actions link that gave birth to it. In response to an HTTP GET request on the destination URL of an actions link exposed by a resource, an Extended Web Thing must return an array of Action descriptions that the initial resource may achieve.",
-          "allOf": [
-            {
-              "$ref": "#/definitions/link"
+          "type": "object",
+          "properties": {
+            "link": {
+              "$ref": "#/definitions/rfc3986uri"
             },
-            {
-              "properties": {
-                "resources": {
+            "title": {
+              "description": "A concise description of the link",
+              "type": "string"
+            },
+            "resources": {
+              "type": "object",
+              "patternProperties": {
+                "^.+$": {
                   "type": "object",
-                  "patternProperties": {
-                    "^.+$": {
+                  "properties": {
+                    "values": {
                       "type": "object",
-                      "properties": {
-                        "values": {
-                          "type": "object",
-                          "patternProperty": {
-                            "^.+$":{"$ref": "#/definitions/valueDefinition"}
-                          }
+                      "patternProperty": {
+                        "^.+$": {
+                          "$ref": "#/definitions/valueDefinition"
                         }
                       }
                     }
@@ -180,7 +184,8 @@
                 }
               }
             }
-          ]
+          },
+          "additionalProperties": false
         },
         "product": {
           "$ref": "#/definitions/link"
