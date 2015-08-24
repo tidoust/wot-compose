@@ -53,6 +53,17 @@
                     status: 'Doctoral Dissertation',
                     date: 'September 2000'
                 },
+                'QUTD': {
+                    title: 'QUDT - Quantities, Units, Dimensions and Data Types Ontologies',
+                    href: 'http://www.qudt.org/',
+                    authors: [
+                        'Ralph Hodgson',
+                        'Paul J. Keller',
+                        'Jack Hodges',
+                        'Jack Spivak'
+                    ],
+                    date: 'March 18, 2014'
+                },
                 'SI': {
                     title: 'International System of Units (SI)',
                     href: 'http://physics.nist.gov/cuu/Units/units.html'
@@ -135,9 +146,8 @@
             <strong>Web Things Model</strong>. Once a Web Thing follows the conventions defined above, it is then
             capable to read and exchange data with any other entities of the Web of Things. However, it does not mean it
             can “understand” what the object is, what data or services it offers, etc. Therefore, the second component
-            of this specification proposes RESTful Web protocol with a set of resources, data models, payload syntax and
-            semantic extensions that Web Thing and applications should follow. Respecting these requirements turns a Web
-            Thing into an Extended Web Thing. Implementing semantic extensions (e.g., via <a href="http://json-ld.org/">JSON-LD</a> and <a href="http://schema.org">schema.org</a>) turns the Extended Web Thing into a Semantic Web Thing.
+            of this specification proposes RESTful Web protocol with a set of resources, data models and payload syntax that Web Thing and applications should follow. Respecting these requirements turns a Web
+            Thing into an Extended Web Thing. Implementing semantic extensions (e.g., via [[JSON-LD]] and <a href="http://schema.org">schema.org</a>) turns the Extended Web Thing into a Semantic Web Thing.
         </li>
     </ul>
     <figure id="wot-levels">
@@ -146,6 +156,9 @@
              width="800"/>
         <figcaption>Web Thing Model levels</figcaption>
     </figure>
+    <p class="note">
+      Semantic extensions are not covered by this specification. The data model defined in this specification may benefit from alignment with the vocabulary used in <a href="http://schema.org">schema.org</a>. It should also be easy to link the type of a value (see <a href="#values"></a>) to an ontology, for instance to units defined in the [[QUTD]] ontology.
+    </p>
 </section>
 
 <section id='conformance'>
@@ -512,8 +525,10 @@
 
             <p>
                 A <a>Web Thing</a> MAY provide additional representations of its data and descriptions. JSON being the
-                only mandatory representation, the rest of the formats are up to the implementers if needed for
-                additional purposes.
+                only mandatory representation, the rest of the formats are up to the implementers if needed for additional purposes.
+            </p>
+            <p class="note">
+                Further specifications should describe how to enrich the data model defined in this document with semantic annotations.
             </p>
         </section>
 
