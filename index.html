@@ -153,15 +153,15 @@
         This specification has two classes of products:
     </p>
     <dl>
-        <dt><dfn>Web Thing</dfn></dt>
+        <dt><dfn data-lt="Web Things|Thing|Things">Web Thing</dfn></dt>
         <dd>
-            A Web Thing is a digital representation of a physical object accessible via a RESTful Web API. Examples of
+            A Web Thing (or simply Thing) is a digital representation of a physical object accessible via a RESTful Web API. Examples of
             Web Things are: an Arduino board, a garage door, a bottle of soda, a building, a TV, etc. The API of the Web
             Thing can be hosted on the Thing itself or on an intermediate host in the network such as a Gateway or a
             Cloud service (for Things that aren't accessible through the Internet).
             <p>A <a>Web Thing</a> conforms to this specification if it follows the statements defined in <a href="#web-things-requirements"></a>.</p>
         </dd>
-        <dt><dfn>Extended Web Thing</dfn></dt>
+        <dt><dfn data-lt="Extended Web Things">Extended Web Thing</dfn></dt>
         <dd>
             An <a>Extended Web Thing</a> that also supports the REST API and data model defined in this specification,
             thus enabling its automatic inclusion in more complex systems.
@@ -178,20 +178,20 @@
         The following terms are considered in this proposal:
     </p>
     <dl>
-        <dt><dfn>Client</dfn></dt>
+        <dt><dfn data-lt="Clients">Client</dfn></dt>
         <dd>A <a>Client</a> refers to any physical or digital entity that can interact with a Web Thing. This can be a
             mobile application, a Web browser, a proxy, a desktop application, but also another Web Things (e.g., in the
             case of Machine to Machine communication).
         </dd>
 
-        <dt><dfn>Property</dfn>
+        <dt><dfn data-lt="Properties">Property</dfn>
         <dt>
-        <dd>A <a title="property">Property</a> is a variable of a Web Thing. Properties represent the internal state of a  <a>Web Thing</a>. Clients can
+        <dd>A <a>Property</a> is a variable of a Web Thing. Properties represent the internal state of a  <a>Web Thing</a>. Clients can
             subscribe to properties to receive a notification message when specific conditions are met (e.g. value of
             one or more properties changed).
         </dd>
 
-        <dt><dfn>Action</dfn></dt>
+        <dt><dfn data-lt="Actions">Action</dfn></dt>
         <dd>An <a>Action</a> is a function offered by a <a>Web Thing</a>. A Client invokes a function on a <a>Web Thing</a> which initiates a state transition by sending it an Action. Examples of Actions are “open” or “close” for a garage door; “enable” or
             “disable” for a smoke alarm; “check-in” or “scan” for a bottle of soda or a place. The direction of an
             <a>Action</a> is from the <a>Client</a> to the <a>Web Thing</a>.
@@ -203,15 +203,14 @@
     <h2>Web Things integration patterns</h2>
 
     <p>
-        This part looks into the different ways of integrating physical objects to the Web to make them <a
-            title="Web Thing">Web Things</a>. Once a pattern has been choosen, the server of a <a>Web Thing</a> should
+        This part looks into the different ways of integrating physical objects to the Web to make them <a>Web Things</a>. Once a pattern has been choosen, the server of a <a>Web Thing</a> should
         follow the <a href="#web-things-requirements">Web Things Requirements</a> and the resources and payloads it uses
         should follow the <a href="#web-things-model">Web Things Model</a>.
     </p>
 
     <p>
         Some physical entities might not expose a Web API themselves for various reasons (e.g., a ZigBee sensor node, or
-        an heart rate monitor accessible over Bluetooth only), in which case they are not <a title="Web Thing">Web
+        an heart rate monitor accessible over Bluetooth only), in which case they are not <a>Web
         Things</a> as such, but they can use another <a>Web Thing</a> as a proxy or gateway to provide a Web API for
         them, therefore turning them into Web Things.
     </p>
@@ -225,7 +224,7 @@
         <h2><dfn>Direct</dfn> connectivity</h2>
 
         <p>
-            In the most straightforward case, a <a>Web Thing</a> is simply a Web API that <a title="Client">Clients</a>
+            In the most straightforward case, a <a>Web Thing</a> is simply a Web API that <a>Clients</a>
             send requests to. In some cases, the <a>Client</a> and the <a>Web Thing</a> can be on the same network or on
             different networks. In both cases, you are sending the same request to a <a>Web Thing</a>, the only
             difference is the URL to which you are sending the request (and obviously how the lamp gets the message).
@@ -273,7 +272,7 @@
     <h2>Web Things requirements</h2>
 
     <p>
-        This part defines a set of rules for implementing <a title="Web Thing">Web Things</a>. It assumes that an <a
+        This part defines a set of rules for implementing <a>Web Things</a>. It assumes that an <a
             href="#web-things-integration-pattern">Integration Pattern</a> was chosen.
     </p>
     <section>
@@ -281,15 +280,15 @@
 
         <p>
             This section defines the Level 0 requirements – all of which MUST be in place in any <a>Web Thing</a>
-            implementation, as all <a title="Client">Clients</a> will expect these constraints.
+            implementation, as all <a>Clients</a> will expect these constraints.
         </p>
 
         <section>
             <h2>R0.1 – A <a>Web Thing</a> MUST at least be an HTTP/1.1 server</h2>
 
             <p>
-                All <a title="Web Thing">Web Things</a> MUST support communication over HTTP/1.1 [[!RFC2616]]. When
-                possible, <a title="Web Thing">Web Things</a> SHOULD also support HTTP/2 [[!RFC7540]].
+                All <a>Web Things</a> MUST support communication over HTTP/1.1 [[!RFC2616]]. When
+                possible, <a>Web Things</a> SHOULD also support HTTP/2 [[!RFC7540]].
             </p>
 
             <p class="note">
@@ -300,7 +299,7 @@
             </p>
 
             <p class="note">
-                As a consequence, while <a title="Client">Clients</a> should not expect support for HTTP/2,
+                As a consequence, while <a>Clients</a> should not expect support for HTTP/2,
                 communication with a <a>Web Thing</a> using HTTP/1.1 is always possible.
             </p>
         </section>
@@ -312,8 +311,7 @@
                 A <a>Web Thing</a> MUST have a so-called “root resource” identified by a HTTP URL (uses the HTTP
                 protocol, therefore starts with <code>http://</code> or <code>https://</code>) that acts as the entry
                 point for the <a>Web Thing</a> and enables the interaction with it. This root resource makes the <a>Web
-                Thing</a> both uniquely identifiable and addressable over a network so that <a
-                    title="Client">Clients</a> can interact with it.
+                Thing</a> both uniquely identifiable and addressable over a network so that <a>Clients</a> can interact with it.
             </p>
 
             <p>
@@ -405,9 +403,8 @@
             <h2>R0.6 – A <a>Web Thing</a> MUST support <code>GET</code> on its root URL</h2>
 
             <p>
-                Because they all have a unique root URL and sometimes it is all we know about them, <a
-                    title="Web Thing">Web Things</a> MUST respond to HTTP <code>GET</code> requests on their root URL
-                with their basic representation, so that <a title="Client">Clients</a> can use and understand it.
+                Because they all have a unique root URL and sometimes it is all we know about them, <a>Web Things</a> MUST respond to HTTP <code>GET</code> requests on their root URL
+                with their basic representation, so that <a>Clients</a> can use and understand it.
             </p>
 
             <p class="note">
@@ -421,8 +418,7 @@
         <h2>Level 1 – SHOULD</h2>
 
         <p>
-            Unless there are technical or practical limitations for not adhering to Level 1 constraints, <a
-                title="Web Thing">Web Things</a> SHOULD support the following constraints.
+            Unless there are technical or practical limitations for not adhering to Level 1 constraints, <a>Web Things</a> SHOULD support the following constraints.
         </p>
 
         <section>
@@ -435,7 +431,7 @@
             </p>
 
             <p>
-                <a title="Web Thing">Web Things</a> MAY use other security mechanisms if they want to (in addition or in
+                <a>Web Things</a> MAY use other security mechanisms if they want to (in addition or in
                 place of HTTPS). In some cases, it might be impossible or impractical to implement HTTPS over TLS (for
                 example in pure intranet scenario), in which case using another security mechanism is still highly
                 recommended.
@@ -464,7 +460,7 @@
             <p class="note">
                 An <a>Extended Web Thing</a> fulfills this requirement by definition. In other words, while this
                 specification acknowledges the usefulness of the <a>Web Thing</a> level to accommodate legacy devices
-                and very restricted scenarios, implementers are encouraged to implement <a title="Extended Web Thing">Extended
+                and very restricted scenarios, implementers are encouraged to implement <a>Extended
                 Web Things</a>.
             </p>
         </section>
@@ -545,7 +541,7 @@
 
     <p>
         This part defines the model, JSON payloads and REST API that an <a>Extended Web Thing</a> MUST implement to
-        allow <a title="Client">Clients</a> to discover and use its properties on an automated basis. It assumes an <a
+        allow <a>Clients</a> to discover and use its properties on an automated basis. It assumes an <a
             href="#web-things-integration-pattern">Integration Pattern</a> and that the Web Thing follows the <a
             href="#web-things-requirements">Web Things Requirements</a>.
     </p>
@@ -778,7 +774,7 @@
             <tbody>
             <tr>
                 <td><code>model</code></td>
-                <td>A link to a <a>Extended Web Thing</a> compliant description of a resource.</td>
+                <td>A link to an <a>Extended Web Thing</a> compliant description of a resource.</td>
                 <td><a href="#model-resource">Model Resource</a></td>
             </tr>
             <tr>
@@ -793,7 +789,7 @@
             </tr>
             <tr>
                 <td><code>things</code></td>
-                <td>The <a title="Web Thing">Web things</a> proxied by this resource (if applicable).</td>
+                <td>The <a>Web things</a> proxied by this resource (if applicable).</td>
                 <td><a href="#things-resource">Things Resource</a></td>
             </tr>
             <tr>
@@ -945,7 +941,7 @@
         <h2>Values</h2>
 
         <p>
-            Several resources support values (particularly <a title="Action">Actions</a> and <a title="Property">Properties</a>).
+            Several resources support values (particularly <a>Actions</a> and <a>Properties</a>).
             A <code>values</code> object contains the description of a set of values identified by their name. The
             description includes the value type, unit, and possible concrete values that the value can take. A <code>values</code>
             object is typically used to define the parameters a <a>Client</a> can use when it issues an <a>Action</a> or
@@ -1175,13 +1171,13 @@
             <h2>Web <dfn>Thing Resource</dfn></h2>
 
             <p>
-                A <a>Web Thing</a> (<dfn>Thing</dfn> hereafter) is the virtual representation of a physical object. It is the root resource of the Web
+                A <a>Web Thing</a> is the virtual representation of a physical object. It is the root resource of the Web
                 Things model.
             </p>
 
             <p>
                 The <dfn>Thing URL</dfn> is either the root URL of the API or, in the case of a proxy for other Things,
-                the result of resolving the <code>id</code> returned in the representation of the <a title="Thing">Things</a>
+                the result of resolving the <code>id</code> returned in the representation of the <a>Things</a>
                 resource.
             </p>
             <section>
@@ -1248,7 +1244,7 @@
                 <p>
                     A <dfn>Model</dfn> describes the values of <code>properties</code> and <code>actions</code> that can
                     be
-                    performed on <a title="Thing">Things</a>.
+                    performed on <a>Things</a>.
                 </p>
 
                 <p>
@@ -1577,8 +1573,7 @@
                         In response to an HTTP <code>POST</code> request on the destination URL of a <code>properties</code>
                         link, an <a>Extended Web Thing</a> MUST either reject the request with the appropriate status
                         code
-                        or store the provided values as new values for each of the provided <a
-                            title="Property">Properties</a>.
+                        or store the provided values as new values for each of the provided <a>Properties</a>.
                     </p>
             <pre class="example" title="Update multiple properties at once">
               --&gt; REQUEST
@@ -1805,7 +1800,7 @@
                 <h2><dfn>Things Resource</dfn></h2>
 
                 <p>
-                    A <a>Web Thing</a> may proxy other <a title="Web Thing">Web Things</a> via the Things resource. For instance, it is expected
+                    A <a>Web Thing</a> may proxy other <a>Web Things</a> via the Things resource. For instance, it is expected
                     that gateways and cloud services will proxy a number of third party devices. On top of <a
                         href="#common-constructs"></a>, the JSON representation used to describe a link to another
                     thing
@@ -1894,7 +1889,7 @@
 
             <section>
                 <h2><dfn>Subscriptions Resource</dfn></h2>
-                <p>All resources can be subscribed to but in particular, an <a>Extended Web Thing</a> SHOULD enable subscriptions to <a title="Action">Actions</a> and <a title="Property">Properties</a>. Subscriptions allows for a <a>Client</a> to be notified via a push event whenever the state of an observed resources changes.</p>
+                <p>All resources can be subscribed to but in particular, an <a>Extended Web Thing</a> SHOULD enable subscriptions to <a>Actions</a> and <a>Properties</a>. Subscriptions allows for a <a>Client</a> to be notified via a push event whenever the state of an observed resources changes.</p>
 
                 <p>
                     The <dfn>Subscription resource</dfn> allows to list current subscriptions to resources as well as cancelling a subscription. Such a resource is accessible via the root URL of the <a>Extended Web Thing</a>.</p>
